@@ -1,5 +1,5 @@
 resource "aws_iam_role" "ecs_task_execution_role_svc" {
-  name = "aws_ecs_task_execution_role_svc"
+  name = "ga_sb_${var.env}_ecs_task_execution_role_svc"
 
   assume_role_policy = <<EOF
 {
@@ -23,7 +23,7 @@ EOF
 }
 
 resource "aws_iam_role_policy" "ecs_task_execution_policy" {
-  name = "ecs_task_execution_policy"
+  name = "ga_sb_${var.env}_ecs_task_execution_policy"
   role = aws_iam_role.ecs_task_execution_role_svc.id
 
   policy = <<EOF

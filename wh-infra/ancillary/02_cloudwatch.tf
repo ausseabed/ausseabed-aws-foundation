@@ -1,7 +1,7 @@
 
 
 resource "aws_cloudwatch_log_group" "geoserver" {
-  name = "/ecs/geoserver"
+  name = "/ecs/ga_sb_${var.env}_geoserver"
 
   tags = {
     Environment = "poc"
@@ -9,7 +9,7 @@ resource "aws_cloudwatch_log_group" "geoserver" {
   }
 }
 resource "aws_cloudwatch_log_group" "mapserver" {
-  name = "/ecs/mapserver"
+  name = "/ecs/ga_sb_${var.env}_mapserver"
 
   tags = {
     Environment = "poc"

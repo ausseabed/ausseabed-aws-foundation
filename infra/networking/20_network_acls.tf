@@ -79,13 +79,13 @@ resource "aws_network_acl_rule" "web_acl_expose_ethemeral_port_to_vpc_additional
 resource "aws_network_acl_rule" "web_acl_enable_all_ingress_between_azs" {
   network_acl_id = aws_network_acl.ga_sb_vpc_web_acl.id
 
-  count = length(aws_subnet.ga_sb_vpc_web_subnet)
+  count = length(var.ga_sb_web_subnet_segments)
 
   egress = false
   protocol = "tcp"
   rule_number = 10100 + count.index
   rule_action = "allow"
-  cidr_block = aws_subnet.ga_sb_vpc_web_subnet[count.index].cidr_block
+  cidr_block = var.ga_sb_web_subnet_segments[count.index]
   from_port = 0
   to_port = 65535
 
@@ -96,13 +96,13 @@ resource "aws_network_acl_rule" "web_acl_enable_all_ingress_between_azs" {
 resource "aws_network_acl_rule" "web_acl_enable_all_egress_between_azs" {
   network_acl_id = aws_network_acl.ga_sb_vpc_web_acl.id
 
-  count = length(aws_subnet.ga_sb_vpc_web_subnet)
+  count = length(var.ga_sb_web_subnet_segments)
 
   egress = true
   protocol = "tcp"
   rule_number = 10100 + count.index
   rule_action = "allow"
-  cidr_block = aws_subnet.ga_sb_vpc_web_subnet[count.index].cidr_block
+  cidr_block = var.ga_sb_web_subnet_segments[count.index]
   from_port = 0
   to_port = 65535
 
@@ -111,13 +111,13 @@ resource "aws_network_acl_rule" "web_acl_enable_all_egress_between_azs" {
 resource "aws_network_acl_rule" "web_acl_enable_all_egress_to_app_tier" {
   network_acl_id = aws_network_acl.ga_sb_vpc_web_acl.id
 
-  count = length(aws_subnet.ga_sb_vpc_app_subnet)
+  count = length(var.ga_sb_app_subnet_segments)
 
   egress = true
   protocol = "tcp"
   rule_number = 10200 + count.index
   rule_action = "allow"
-  cidr_block = aws_subnet.ga_sb_vpc_app_subnet[count.index].cidr_block
+  cidr_block = var.ga_sb_app_subnet_segments[count.index]
   from_port = 0
   to_port = 65535
 

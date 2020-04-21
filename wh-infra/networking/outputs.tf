@@ -1,5 +1,9 @@
 #-----networking/outputs.tf
 
+output "web_tier_subnets" {
+  value = data.aws_subnet_ids.web_tier_subnets.ids
+}
+
 output "db_tier_subnets" {
   value = data.aws_subnet_ids.db_tier_subnets.ids
 }

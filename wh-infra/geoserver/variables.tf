@@ -1,3 +1,5 @@
+variable "env"{}
+
 #------compute/variables.tf
 
 variable "server_cpu"{}
@@ -12,11 +14,13 @@ variable "geoserver_image"{}
 
 variable "aws_ecs_lb_target_group_geoserver_arn"{}
 
+variable "ecs_wh_security_group_id"{}
+
 
 variable "networking" {
   type = object({
     vpc_id = string,
-    app_tier_subnets = set(string)
+    app_tier_subnets = list(string)
   })
 }
 

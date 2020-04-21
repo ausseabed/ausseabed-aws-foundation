@@ -21,3 +21,14 @@ variable "ga_sb_app_subnet_cidrs" {
 variable "ga_sb_db_subnet_cidrs" {
   type = list(string)
 }
+
+variable "ga_sb_web_subnet_segments" {
+  type = list(string)
+}
+
+variable "ga_sb_app_subnet_segments" {
+  type = list(string)
+}
+variable "ga_sb_db_subnet_segments" {
+  type = list(string)
+}

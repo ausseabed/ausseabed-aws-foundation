@@ -17,8 +17,11 @@ variable "ga_sb_vpc_cidr" {}
 variable "ga_sb_vpc_secondary_cidrs" {}
 
 variable ga_sb_web_subnet_cidrs {}
+variable ga_sb_web_subnet_segments {}
 
 variable ga_sb_app_subnet_cidrs {}
+variable ga_sb_app_subnet_segments {}
 
 variable ga_sb_db_subnet_cidrs {}
+variable ga_sb_db_subnet_segments {}
 

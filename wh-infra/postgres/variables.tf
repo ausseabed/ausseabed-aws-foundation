@@ -1,4 +1,5 @@
 variable "aws_region" {}
+variable "env" {}
 
 variable "postgres_server_spec"{}
 

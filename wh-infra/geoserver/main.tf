@@ -2,12 +2,12 @@
 
 
 resource "aws_ecs_cluster" "ga_sb_wh_geoserver_cluster" {
-  name = "ga_sb_wh_geoserver_cluster"
+  name = "ga_sb_${var.env}_geoserver_cluster"
 }
 
 
 resource "aws_ecs_task_definition" "geoserver" {
-  family                   = "ga_sb_wh_geoserver"
+  family                   = "ga_sb_${var.env}_wh_geoserver"
   cpu                      = var.server_cpu
   memory                   = var.server_memory
   network_mode             = "awsvpc"
@@ -68,7 +68,7 @@ DEFINITION
 
 
 resource "aws_ecs_service" "geoserver_service" {
-  name            = "geoserver_service"
+  name            = "ga_sb_${var.env}_geoserver_service"
   cluster         = aws_ecs_cluster.ga_sb_wh_geoserver_cluster.id
   task_definition = aws_ecs_task_definition.geoserver.arn
   desired_count   = 1
@@ -82,7 +82,7 @@ resource "aws_ecs_service" "geoserver_service" {
 
   network_configuration {
     subnets=[var.networking.app_tier_subnets[0]]
-//    security_groups= var.public_sg
+    security_groups=[var.ecs_wh_security_group_id]
     assign_public_ip=true
   }
 

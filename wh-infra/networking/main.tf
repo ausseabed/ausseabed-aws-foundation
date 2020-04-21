@@ -6,11 +6,12 @@ data "aws_vpc" "ga_sb_vpc" {
   }
 }
 
-data "aws_subnet" "web_tier_subnet" {
+data "aws_subnet_ids" "web_tier_subnets" {
+  vpc_id = data.aws_vpc.ga_sb_vpc.id
   filter {
-    name = "tag:Name"
+    name = "tag:Tier"
     values = [
-      "ga_sb_vpc_web_1"
+      "ga_sb_vpc_web"
     ]
   }
 }

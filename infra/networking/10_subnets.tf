@@ -9,6 +9,8 @@ resource "aws_subnet" "ga_sb_vpc_web_subnet" {
 
   tags = {
     Name = "ga_sb_vpc_web_${count.index + 1}"
+    Tier = "ga_sb_vpc_web"
+
   }
   depends_on = [
     aws_vpc_ipv4_cidr_block_association.secondary_cidr
@@ -23,6 +25,8 @@ resource "aws_subnet" "ga_sb_vpc_app_subnet" {
 
   tags = {
     Name = "ga_sb_vpc_app_${count.index + 1}"
+    Tier = "ga_sb_vpc_app"
+
   }
 
   depends_on = [
@@ -59,7 +63,7 @@ resource "aws_route_table_association" "ga_sb_vpc_public_assoc" {
 resource "aws_route_table_association" "ga_sb_vpc_rt_app_assoc" {
   count          = length(aws_subnet.ga_sb_vpc_app_subnet)
   subnet_id      = aws_subnet.ga_sb_vpc_app_subnet.*.id[count.index]
-  route_table_id = aws_default_route_table.default_route_table_private.id
+  route_table_id = aws_route_table.ga_sb_vpc_nat_route_table.id
 }
 
 resource "aws_route_table_association" "ga_sb_vpc_rt_db_assoc" {

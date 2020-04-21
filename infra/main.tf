@@ -17,6 +17,11 @@ module "networking" {
   ga_sb_web_subnet_cidrs = var.ga_sb_web_subnet_cidrs
   ga_sb_app_subnet_cidrs = var.ga_sb_app_subnet_cidrs
   ga_sb_db_subnet_cidrs = var.ga_sb_db_subnet_cidrs
+
+  ga_sb_web_subnet_segments = var.ga_sb_web_subnet_segments
+  ga_sb_app_subnet_segments = var.ga_sb_app_subnet_segments
+  ga_sb_db_subnet_segments = var.ga_sb_db_subnet_segments
+
   ga_sb_vpc_az_count = var.az_count
 
   ga_sb_vpc_secondary_cidrs = var.ga_sb_vpc_secondary_cidrs
