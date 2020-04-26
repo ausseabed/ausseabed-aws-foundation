@@ -45,7 +45,7 @@ resource "aws_instance" "app_tier_instance" {
   instance_type        = "t2.micro"
   subnet_id            = data.aws_subnet.app_tier_subnet.id
   key_name             = "AWS-dev-box"
-  iam_instance_profile = "Manual-SSM-Managed-Instance"
+  iam_instance_profile = "for_dave_cli"
   tags = {
     Name = "app_tier_dave_test_instance"
   }
