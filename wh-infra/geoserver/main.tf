@@ -36,7 +36,7 @@ resource "aws_ecs_task_definition" "geoserver" {
       },
       {
         "name": "LIST_PATH",
-        "value": "https://ausseabed-public-bathymetry-nonprod.s3-ap-southeast-2.amazonaws.com/registered_files.json"
+        "value": "https://catalogue.dev.ausseabed.gov.au/api/products"
       },
       {
         "name": "INITIAL_MEMORY",
