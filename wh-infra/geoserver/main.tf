@@ -12,16 +12,16 @@ resource "aws_ecs_task_definition" "geoserver" {
   memory                   = var.server_memory
   network_mode             = "awsvpc"
   execution_role_arn       = var.ecs_task_execution_role_svc_arn
-  task_role_arn       = var.ecs_task_execution_role_svc_arn
+  task_role_arn            = var.ecs_task_execution_role_svc_arn
   requires_compatibilities = ["FARGATE"]
-  container_definitions = <<DEFINITION
+  container_definitions    = <<DEFINITION
 [
   {
     "logConfiguration": {
       "logDriver": "awslogs",
       "secretOptions": null,
       "options": {
-        "awslogs-group": "/ecs/geoserver",
+        "awslogs-group": "/ecs/ga_sb_${var.env}_geoserver",
         "awslogs-region": "ap-southeast-2",
         "awslogs-stream-prefix": "ecs"
       }
@@ -72,8 +72,8 @@ resource "aws_ecs_service" "geoserver_service" {
   cluster         = aws_ecs_cluster.ga_sb_wh_geoserver_cluster.id
   task_definition = aws_ecs_task_definition.geoserver.arn
   desired_count   = 1
-  launch_type = "FARGATE"
-  
+  launch_type     = "FARGATE"
+
   load_balancer {
     target_group_arn = var.aws_ecs_lb_target_group_geoserver_arn
     container_name   = "geoserver-task"
@@ -81,9 +81,9 @@ resource "aws_ecs_service" "geoserver_service" {
   }
 
   network_configuration {
-    subnets=[var.networking.app_tier_subnets[0]]
-    security_groups=[var.ecs_wh_security_group_id]
-    assign_public_ip=true
+    subnets          = [var.networking.app_tier_subnets[0]]
+    security_groups  = [var.ecs_wh_security_group_id]
+    assign_public_ip = false
   }
 
 }
