@@ -1,3 +1,7 @@
+locals {
+  env = terraform.workspace
+}
+
 provider "aws" {
   region = var.aws_region
 }
@@ -27,4 +31,8 @@ module "networking" {
   ga_sb_vpc_secondary_cidrs = var.ga_sb_vpc_secondary_cidrs
 }
 
+module "compute" {
+  source = "./compute"
+  env = local.env
+}
 
