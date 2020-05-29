@@ -19,13 +19,19 @@ variable "accessip" {}
 
 #variable "fargate_cpu"{}
 #variable "fargate_memory"{}
-variable "geoserver_image"{} # based on kartoza/geoserver
-variable "server_cpu"{}
-variable "server_memory"{}
+variable "geoserver_image" {} # based on kartoza/geoserver
 
-variable "geoserver_initial_memory"{}
-variable "geoserver_maximum_memory"{}
-variable "geoserver_admin_password"{}
+variable "server_cpu" {}
+variable "server_memory" {}
+variable "geoserver_initial_memory" {}
+variable "geoserver_maximum_memory" {}
+variable "geoserver_admin_password" {}
 
-variable "postgres_admin_password"{}
-variable "postgres_server_spec"{}
+variable "auth_host" {}
+variable "auth_client_id" {}
+variable "client_pem_thumbprint" {}
+variable "client_pem_key" {}
+
+
+variable "postgres_admin_password" {}
+variable "postgres_server_spec" {}

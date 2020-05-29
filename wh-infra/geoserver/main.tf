@@ -36,23 +36,39 @@ resource "aws_ecs_task_definition" "geoserver" {
       },
       {
         "name": "LIST_PATH",
-        "value": "https://catalogue.dev.ausseabed.gov.au/api/products"
+        "value": "https://catalogue.dev.ausseabed.gov.au/rest"
       },
       {
         "name": "INITIAL_MEMORY",
-        "value": "${var.geoserver_initial_memory}"
+        "value": "${var.geoserver_environment_vars.geoserver_initial_memory}"
       },
       {
         "name": "MAXIMUM_MEMORY",
-        "value": "${var.geoserver_maximum_memory}"
+        "value": "${var.geoserver_environment_vars.geoserver_maximum_memory}"
       },
       {
         "name": "GEOSERVER_ADMIN_PASSWORD",
-        "value" : "${var.geoserver_admin_password}" 
+        "value" : "${var.geoserver_environment_vars.geoserver_admin_password}" 
       },
       {
         "name": "COMMUNITY_EXTENSIONS",
         "value" : "gwc-s3-plugin" 
+      },
+      {
+        "name": "AUTH_HOST",
+        "value" : "${var.geoserver_environment_vars.auth_host}" 
+      },
+      {
+        "name": "AUTH_CLIENT_ID",
+        "value" : "${var.geoserver_environment_vars.auth_client_id}" 
+      },
+      {
+        "name": "CLIENT_PEM_THUMBPRINT",
+        "value" : "${var.geoserver_environment_vars.client_pem_thumbprint}" 
+      },
+      {
+        "name": "CLIENT_PEM_KEY",
+        "value" : "${var.geoserver_environment_vars.client_pem_key}" 
       }
     ],
     "portMappings": [
