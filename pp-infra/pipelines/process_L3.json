@@ -82,6 +82,10 @@
                                                 {
                                                     "Name": "S3_SRC_TIF",
                                                     "Value.$": "$.s3_src_tif"
+                                                },
+                                                {
+                                                    "Name": "S3_DEST_SHP",
+                                                    "Value.$": "$.s3_dest_tif"
                                                 }
                                             ]
                                         }
