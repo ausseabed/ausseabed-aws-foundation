@@ -17,6 +17,8 @@ terraform {
 
 module "networking" {
   source = "./networking"
+  env    = local.env
+
 }
 
 module "ancillary" {

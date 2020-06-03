@@ -31,6 +31,7 @@ data "aws_subnet" "db_tier_subnet" {
 
 
 resource "aws_instance" "web_tier_instance" {
+  count = local.enable_ec2_test ? 1 : 0
   ami           = data.aws_ami.amazon_linux.id
   instance_type = "t2.micro"
   subnet_id = data.aws_subnet.web_tier_subnet.id
@@ -42,6 +43,8 @@ resource "aws_instance" "web_tier_instance" {
 }
 
 resource "aws_instance" "app_tier_instance" {
+  count = local.enable_ec2_test ? 1 : 0
+
   ami           = data.aws_ami.amazon_linux.id
   instance_type = "t2.micro"
   subnet_id = data.aws_subnet.app_tier_subnet.id
@@ -53,6 +56,8 @@ resource "aws_instance" "app_tier_instance" {
 }
 
 resource "aws_instance" "db_tier_instance" {
+  count = local.enable_ec2_test ? 1 : 0
+
   ami           = data.aws_ami.amazon_linux.id
   instance_type = "t2.micro"
   subnet_id = data.aws_subnet.db_tier_subnet.id

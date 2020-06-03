@@ -1,7 +1,7 @@
 resource "aws_default_network_acl" "default" {
   default_network_acl_id = aws_vpc.ga_sb_vpc.default_network_acl_id
   tags = {
-    Name = "ga_sb_vpc_default_acl_deny_all"
+    Name = "ga_sb_${var.env}_vpc_default_acl_deny_all"
   }
 
   # as a default Network ACL, if subnet is not associated to anything else,
@@ -15,7 +15,7 @@ resource "aws_network_acl" "ga_sb_vpc_web_acl" {
   vpc_id = aws_vpc.ga_sb_vpc.id
 
   tags = {
-    Name = "ga_sb_vpc_web_acl"
+    Name = "ga_sb_${var.env}_vpc_web_acl"
   }
 
   subnet_ids = aws_subnet.ga_sb_vpc_web_subnet.*.id
@@ -144,7 +144,7 @@ resource "aws_network_acl" "ga_sb_vpc_app_acl" {
   vpc_id = aws_vpc.ga_sb_vpc.id
 
   tags = {
-    Name = "ga_sb_vpc_app_acl"
+    Name = "ga_sb_${var.env}_vpc_app_acl"
   }
 
   subnet_ids = aws_subnet.ga_sb_vpc_app_subnet.*.id
@@ -293,7 +293,7 @@ resource "aws_network_acl" "ga_sb_vpc_db_acl" {
   vpc_id = aws_vpc.ga_sb_vpc.id
 
   tags = {
-    Name = "ga_sb_vpc_db_acl"
+    Name = "ga_sb_${var.env}_vpc_db_acl"
   }
 
   subnet_ids = aws_subnet.ga_sb_vpc_db_subnet.*.id

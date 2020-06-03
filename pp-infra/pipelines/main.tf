@@ -7,8 +7,8 @@ locals {
     "ausseabed_sm_role" = var.ausseabed_sm_role
     "aws_ecs_cluster_arn"  = var.aws_ecs_cluster_arn
     "aws_ecs_task_definition_gdal_arn" = var.aws_ecs_task_definition_gdal_arn
-    "aws_ecs_task_definition_caris_sg" = "default"
-    "aws_ecs_task_definition_caris_subnet" = "TODO"
+    "aws_ecs_task_definition_caris_sg" = "sg-0fbe854781a4128f0" #TODO
+    "aws_ecs_task_definition_caris_subnet" = var.networking.app_tier_subnets[0]
     "aws_ecs_task_definition_mbsystem_arn" = var.aws_ecs_task_definition_mbsystem_arn
     "aws_ecs_task_definition_pdal_arn" = var.aws_ecs_task_definition_pdal_arn
     "aws_ecs_task_definition_caris_version_arn" = var.aws_ecs_task_definition_caris_version_arn
@@ -29,24 +29,24 @@ resource "aws_sfn_state_machine" "ausseabed-processing-pipeline-l3" {
   name     = "ga-sb-${var.env}-ausseabed-processing-pipeline-l3"
   role_arn = var.ausseabed_sm_role
   
-  definition = templatefile("${path.module}/process_L3.json",local.pipeline_vars)
+  definition = templatefile("${path.module}/step_functions/process_L3.json",local.pipeline_vars)
 }
 
-resource "aws_sfn_state_machine" "ausseabed-build-l0-sfn" {
-  name     = "ga-sb-${var.env}-ausseabed-build-l0-sfn"
-  role_arn = var.ausseabed_sm_role
-  
-  definition = templatefile("${path.module}/build_L0_coverage.json",local.pipeline_vars)
-}
-
-resource "aws_sfn_state_machine" "ausseabed-processing-pipeline_sfn_state_machine-ga" {
-  name     = "ga-sb-${var.env}-ausseabed-processing-pipeline-ga"
-  role_arn = var.ausseabed_sm_role
-  definition = templatefile("${path.module}/ga_processing_pipeline.json",local.pipeline_vars)
-}
-
-resource "aws_sfn_state_machine" "ausseabed-processing-pipeline_sfn_state_machine-csiro" {
-  name     = "ga-sb-${var.env}-ausseabed-processing-pipeline-csiro"
-  role_arn = var.ausseabed_sm_role
-  definition = templatefile("${path.module}/csiro_processing_pipeline.json", local.pipeline_vars) 
-}
+//resource "aws_sfn_state_machine" "ausseabed-build-l0-sfn" {
+//  name     = "ga-sb-${var.env}-ausseabed-build-l0-sfn"
+//  role_arn = var.ausseabed_sm_role
+//
+//  definition = templatefile("${path.module}/build_L0_coverage.json",local.pipeline_vars)
+//}
+//
+//resource "aws_sfn_state_machine" "ausseabed-processing-pipeline_sfn_state_machine-ga" {
+//  name     = "ga-sb-${var.env}-ausseabed-processing-pipeline-ga"
+//  role_arn = var.ausseabed_sm_role
+//  definition = templatefile("${path.module}/ga_processing_pipeline.json",local.pipeline_vars)
+//}
+//
+//resource "aws_sfn_state_machine" "ausseabed-processing-pipeline_sfn_state_machine-csiro" {
+//  name     = "ga-sb-${var.env}-ausseabed-processing-pipeline-csiro"
+//  role_arn = var.ausseabed_sm_role
+//  definition = templatefile("${path.module}/csiro_processing_pipeline.json", local.pipeline_vars)
+//}

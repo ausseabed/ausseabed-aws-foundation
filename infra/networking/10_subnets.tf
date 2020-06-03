@@ -8,8 +8,11 @@ resource "aws_subnet" "ga_sb_vpc_web_subnet" {
   availability_zone       = data.aws_availability_zones.available.names[count.index]
 
   tags = {
-    Name = "ga_sb_vpc_web_${count.index + 1}"
-    Tier = "ga_sb_vpc_web"
+    Name = "ga_sb_${var.env}_vpc_web_${count.index + 1}"
+    Tier = "ga_sb_${var.env}_vpc_web",
+    "kubernetes.io/role/elb" = "1",
+    "kubernetes.io/cluster/ga_sb_default_eks_cluster" = "shared"
+
 
   }
   depends_on = [
@@ -24,8 +27,10 @@ resource "aws_subnet" "ga_sb_vpc_app_subnet" {
   availability_zone       = data.aws_availability_zones.available.names[count.index]
 
   tags = {
-    Name = "ga_sb_vpc_app_${count.index + 1}"
-    Tier = "ga_sb_vpc_app"
+    Name = "ga_sb_${var.env}_vpc_app_${count.index + 1}"
+    Tier = "ga_sb_${var.env}_vpc_app",
+    "kubernetes.io/role/internal-elb" = "1",
+    "kubernetes.io/cluster/ga_sb_default_eks_cluster" = "shared"
 
   }
 
@@ -43,8 +48,8 @@ resource "aws_subnet" "ga_sb_vpc_db_subnet" {
   availability_zone       = data.aws_availability_zones.available.names[count.index]
 
   tags = {
-    Name = "ga_sb_vpc_db_${count.index + 1}"
-    Tier = "ga_sb_vpc_db"
+    Name = "ga_sb_${var.env}_vpc_db_${count.index + 1}"
+    Tier = "ga_sb_${var.env}_vpc_db"
   }
 
   depends_on = [

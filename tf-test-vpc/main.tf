@@ -10,6 +10,7 @@ terraform {
   }
 }
 
-
-
-
+locals {
+  enable_ec2_test = false
+  env = terraform.workspace
+}

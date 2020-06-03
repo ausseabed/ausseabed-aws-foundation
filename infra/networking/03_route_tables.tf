@@ -4,7 +4,7 @@ resource "aws_default_route_table" "default_route_table_private" {
   default_route_table_id = aws_vpc.ga_sb_vpc.default_route_table_id
 
   tags = {
-    Name = "ga_sb_vpc_private_route"
+    Name = "ga_sb_${var.env}_vpc_private_route"
   }
 }
 
@@ -17,7 +17,7 @@ resource "aws_route_table" "ga_sb_vpc_public_route_table" {
   }
 
   tags = {
-    Name = "ga_sb_vpc_public_route"
+    Name = "ga_sb_${var.env}_vpc_public_route"
   }
 }
 
@@ -30,7 +30,7 @@ resource "aws_route_table" "ga_sb_vpc_nat_route_table" {
   }
 
   tags = {
-    Name = "ga_sb_vpc_nat_route"
+    Name = "ga_sb_${var.env}_vpc_nat_route"
   }
 }
 
