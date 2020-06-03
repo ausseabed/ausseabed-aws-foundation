@@ -1,5 +1,6 @@
 locals {
   env = terraform.workspace
+  secret = jsondecode(data.aws_secretsmanager_secret_version.wh-infra-secrets.secret_string)
 }
 
 provider "aws" {
@@ -14,6 +15,14 @@ terraform {
   }
 }
 
+
+data "aws_secretsmanager_secret" "wh-infra-secrets" {
+  name = "wh-infra.auto.tfvars"
+}
+
+data "aws_secretsmanager_secret_version" "wh-infra-secrets" {
+  secret_id = data.aws_secretsmanager_secret.wh-infra-secrets.id
+}
 
 module "networking" {
   source = "./networking"
@@ -50,9 +59,9 @@ module "geoserver" {
     geoserver_initial_memory = var.geoserver_initial_memory
     geoserver_maximum_memory = var.geoserver_maximum_memory
     geoserver_admin_password = var.geoserver_admin_password
-    auth_host                = var.auth_host,
-    auth_client_id           = var.auth_client_id,
-    client_pem_thumbprint    = var.client_pem_thumbprint,
-    client_pem_key           = var.client_pem_key
+    auth_host                = local.secret["auth_host"],
+    auth_client_id           = local.secret["auth_client_id"],
+    client_pem_thumbprint    = local.secret["client_pem_thumbprint"],
+    client_pem_key           = local.secret["client_pem_key"]
   }
 }

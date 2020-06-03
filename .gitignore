@@ -1,5 +1,6 @@
-
-.terraform
+.DS_Store
+.terraform*
 *.auto.tfvars
 *.iml
 /pp-infra/*.py
+

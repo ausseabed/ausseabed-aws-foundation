@@ -27,11 +27,5 @@ variable "geoserver_initial_memory" {}
 variable "geoserver_maximum_memory" {}
 variable "geoserver_admin_password" {}
 
-variable "auth_host" {}
-variable "auth_client_id" {}
-variable "client_pem_thumbprint" {}
-variable "client_pem_key" {}
-
-
 variable "postgres_admin_password" {}
 variable "postgres_server_spec" {}
