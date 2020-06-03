@@ -1,5 +1,7 @@
 #------networking/variables.tf
 
+variable "env" {}
+
 variable "ga_sb_vpc_cidr" {}
 
 variable "ga_sb_vpc_az_count" {}

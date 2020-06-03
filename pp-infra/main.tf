@@ -23,6 +23,7 @@ module "ancillary" {
 
 module "networking" {
   source = "./networking"
+  env                         = local.env
 
 }
 

@@ -8,7 +8,7 @@ resource "aws_vpc" "ga_sb_vpc" {
   enable_dns_support   = true
 
   tags = {
-    Name = "ga_sb_vpc"
+    Name = "ga_sb_${var.env}_vpc"
   }
 }
 
