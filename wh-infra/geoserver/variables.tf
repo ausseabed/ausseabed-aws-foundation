@@ -11,7 +11,8 @@ variable "geoserver_environment_vars" {
     auth_host                = string,
     auth_client_id           = string,
     client_pem_thumbprint    = string,
-    client_pem_key           = string
+    client_pem_key           = string,
+    product_catalogue_url    = string
   })
 }
 

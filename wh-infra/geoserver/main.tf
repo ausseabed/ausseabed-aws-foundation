@@ -36,7 +36,7 @@ resource "aws_ecs_task_definition" "geoserver" {
       },
       {
         "name": "LIST_PATH",
-        "value": "https://catalogue.dev.ausseabed.gov.au/rest"
+        "value": "${var.geoserver_environment_vars.product_catalogue_url}"
       },
       {
         "name": "INITIAL_MEMORY",

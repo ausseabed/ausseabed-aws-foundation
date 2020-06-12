@@ -5,16 +5,13 @@ provider "aws" {
 data "aws_caller_identity" "current" {}
 
 locals {
-  env = terraform.workspace
+  env        = (var.env != null) ? var.env : terraform.workspace
   account_id = data.aws_caller_identity.current.account_id
 }
 
 
 terraform {
   backend "s3" {
-    bucket = "ausseabed-aws-foundation-tf-infra"
-    key    = "terraform/terraform-aws-foundation.tfstate"
-    region = "ap-southeast-2"
   }
 }
 

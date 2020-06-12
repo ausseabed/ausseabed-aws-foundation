@@ -1,6 +1,11 @@
 
 variable "aws_region" {}
 
+variable "env" {
+  type = string
+  default = null
+}
+
 #------ storage variables
 
 

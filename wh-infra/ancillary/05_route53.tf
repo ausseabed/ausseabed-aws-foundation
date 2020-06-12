@@ -1,21 +1,31 @@
-data "aws_route53_zone" "ausseabed" {
-  name         = "dev.ausseabed.gov.au."
+
+locals {
+  wh_dns_map = map(
+          "default", "dev.ausseabed.gov.au.",
+          "prod", "ausseabed.gov.au."
+  )
+  wh_dns_zone = local.wh_dns_map[var.env]
 }
+
+data "aws_route53_zone" "ausseabed" {
+  name         = local.wh_dns_zone
+}
+
 
 resource "aws_route53_record" "warehouse_dns" {
   zone_id = data.aws_route53_zone.ausseabed.id
-  name    = "warehouse.dev.ausseabed.gov.au."
+  name    = "warehouse.${local.wh_dns_zone}"
   type    = "CNAME"
   ttl     = "300"
   records = [aws_lb.geoserver_load_balancer.dns_name]
 }
 
 resource "aws_acm_certificate" "warehouse_cert" {
-  domain_name       = "warehouse.dev.ausseabed.gov.au"
+  domain_name       = "warehouse.${local.wh_dns_zone}"
   validation_method = "DNS"
 
   tags = {
-    Environment = "dev"
+    Environment = var.env
   }
 
   lifecycle {

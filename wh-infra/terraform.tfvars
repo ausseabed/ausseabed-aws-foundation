@@ -13,7 +13,7 @@ server_memory = 16384
 
 #fargate_cpu = 512
 #fargate_memory = 1024
-geoserver_image = "288871573946.dkr.ecr.ap-southeast-2.amazonaws.com/ausseabed-geoserver:latest"
+#geoserver_image = "288871573946.dkr.ecr.ap-southeast-2.amazonaws.com/ausseabed-geoserver:latest"
 
 geoserver_initial_memory = "4G"
 geoserver_maximum_memory = "15G"
