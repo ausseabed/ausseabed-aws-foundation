@@ -27,6 +27,9 @@ resource "aws_ecs_task_definition" "ga_sb_pc_serverclient" {
     "image": "${var.server_image}",
     "name": "ga_sb_${var.env}_product_catalogue_server_task",
     "networkMode": "awsvpc",
+    "cpu": "0",
+    "essential": "true",
+
     "environment": [
       {
         "name": "AUTH_HOST",
@@ -58,9 +61,12 @@ resource "aws_ecs_task_definition" "ga_sb_pc_serverclient" {
     ],
     "portMappings": [
       {
-        "containerPort": 3000
+        "containerPort": 3000,
+        "hostPort": 3000,
+        "protocol": "tcp"
       }
-    ]
+    ],
+    "volumesFrom": []
   },
     {
     "logConfiguration": {

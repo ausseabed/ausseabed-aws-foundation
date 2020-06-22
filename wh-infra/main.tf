@@ -1,6 +1,6 @@
 locals {
-  env        = (var.env != null) ? var.env : terraform.workspace
-  secret = jsondecode(data.aws_secretsmanager_secret_version.wh-infra-secrets.secret_string)
+  env                   = (var.env != null) ? var.env : terraform.workspace
+  secret                = jsondecode(data.aws_secretsmanager_secret_version.wh-infra-secrets.secret_string)
   #TODO create .prod.aussueabed zone for internal communications
   product_catalogue_url = (var.env == "default") ? "https://catalogue.dev.ausseabed.gov.au/rest" : "https://catalogue.ausseabed.gov.au/rest"
 }
@@ -45,7 +45,9 @@ module "postgres" {
   aws_region              = var.aws_region
   postgres_admin_password = var.postgres_admin_password
   postgres_server_spec    = var.postgres_server_spec
+  snapshot_identifier     = var.postgres_snapshot_id
   networking              = module.networking
+
 }
 
 module "geoserver" {
@@ -58,7 +60,7 @@ module "geoserver" {
   aws_ecs_lb_target_group_geoserver_arn = module.ancillary.aws_ecs_lb_target_group_geoserver_arn
   server_cpu                            = var.server_cpu
   server_memory                         = var.server_memory
-  geoserver_environment_vars = {
+  geoserver_environment_vars            = {
     geoserver_initial_memory = var.geoserver_initial_memory
     geoserver_maximum_memory = var.geoserver_maximum_memory
     geoserver_admin_password = var.geoserver_admin_password

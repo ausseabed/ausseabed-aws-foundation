@@ -5,6 +5,11 @@ variable "postgres_server_spec" {}
 
 variable "postgres_admin_password" {}
 
+variable "snapshot_identifier" {
+  type    = string
+  default = null
+}
+
 variable "networking" {
   type = object({
     vpc_id           = string,

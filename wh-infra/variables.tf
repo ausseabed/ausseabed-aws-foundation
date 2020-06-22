@@ -34,3 +34,7 @@ variable "geoserver_admin_password" {}
 
 variable "postgres_admin_password" {}
 variable "postgres_server_spec" {}
+variable "postgres_snapshot_id" {
+  type = string
+  default = null
+}

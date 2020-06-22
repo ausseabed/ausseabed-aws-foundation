@@ -58,7 +58,9 @@ module "service" {
 #    postgres_password = "{55250dfe-63b9-4f0a-8ac6-5cd47dd2de36}b",
     postgres_port     = data.aws_db_instance.asbwarehouse.port,
     postgres_user     = data.aws_db_instance.asbwarehouse.master_username,
-    postgres_database = data.aws_db_instance.asbwarehouse.db_name,
+    postgres_database = "ga_sb_${local.env}_wh_asbwarehouse_db",
+    #todo
+    #postgres_database = data.aws_db_instance.asbwarehouse.db_name,
     postgres_hostname = data.aws_db_instance.asbwarehouse.address
 
   }
