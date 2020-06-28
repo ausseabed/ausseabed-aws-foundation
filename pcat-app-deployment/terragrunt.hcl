@@ -4,8 +4,8 @@ locals {
   "288871573946", "arn:aws:iam::007391679308:role/ga-aws-ausseabed-dev-terraform",
   )
   s3_backend_keys      = map(
-  "831535125571", "env:/prod/terraform/pcat-infra/terraform-aws-foundation-pcat-infra.tfstate",
-  "288871573946", "terraform/pcat-infra/terraform-aws-foundation-pcat-infra.tfstate"
+  "831535125571", "env:/prod/terraform/pcat-app-deployment/terraform-aws-foundation-pcat-app-deployment.tfstate",
+  "288871573946", "terraform/pcat-app-deployment/terraform-aws-foundation-pcat-app-deployment.tfstate"
   )
 
   envs = map(
