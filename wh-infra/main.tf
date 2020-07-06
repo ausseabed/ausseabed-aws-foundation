@@ -68,6 +68,7 @@ module "geoserver" {
     auth_host                = local.secret["auth_host"],
     auth_client_id           = local.secret["auth_client_id"],
     client_pem_thumbprint    = local.secret["client_pem_thumbprint"],
-    client_pem_key           = local.secret["client_pem_key"]
+    client_pem_key           = local.secret["client_pem_key"],
+    snapshot_iso_datetime    = (var.geoserver_snapshot_iso_datetime == null) ? timestamp(): var.geoserver_snapshot_iso_datetime 
   }
 }

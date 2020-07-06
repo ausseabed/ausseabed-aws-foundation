@@ -69,6 +69,10 @@ resource "aws_ecs_task_definition" "geoserver" {
       {
         "name": "CLIENT_PEM_KEY",
         "value" : "${var.geoserver_environment_vars.client_pem_key}" 
+      },
+      {
+        "name": "SNAPSHOT_ISO_DATETIME",
+        "value" : "${var.geoserver_environment_vars.snapshot_iso_datetime}" 
       }
     ],
     "portMappings": [
