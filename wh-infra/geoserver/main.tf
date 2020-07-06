@@ -87,7 +87,7 @@ resource "aws_ecs_service" "geoserver_service" {
   name            = "ga_sb_${var.env}_geoserver_service"
   cluster         = aws_ecs_cluster.ga_sb_wh_geoserver_cluster.id
   task_definition = aws_ecs_task_definition.geoserver.arn
-  desired_count   = 3
+  desired_count   = 1
   launch_type     = "FARGATE"
 
   load_balancer {

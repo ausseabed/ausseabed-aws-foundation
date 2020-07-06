@@ -66,7 +66,7 @@ resource "aws_db_instance" "asbwarehouse" {
 
   lifecycle {
     #this prevents Terraform to destroy RDS instance when snapshot identifier is not provided.
-    #to force DB rebuild with new snapshot, use `terraform taint postgres.aws_db_instance.abswarehouse` first
+    #to force DB rebuild with new snapshot, use `terraform taint module.postgres.aws_db_instance.asbwarehouse` first
     ignore_changes = [snapshot_identifier, name]
     # prevent_destroy = true
   }
