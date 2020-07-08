@@ -50,25 +50,3 @@ module "postgres" {
 
 }
 
-module "geoserver" {
-  source                                = "./geoserver"
-  env                                   = local.env
-  ecs_task_execution_role_svc_arn       = module.ancillary.ecs_task_execution_role_svc_arn
-  networking                            = module.networking
-  ecs_wh_security_group_id              = module.ancillary.ecs_wh_security_group_id
-  geoserver_image                       = var.geoserver_image
-  aws_ecs_lb_target_group_geoserver_arn = module.ancillary.aws_ecs_lb_target_group_geoserver_arn
-  server_cpu                            = var.server_cpu
-  server_memory                         = var.server_memory
-  geoserver_environment_vars            = {
-    geoserver_initial_memory = var.geoserver_initial_memory
-    geoserver_maximum_memory = var.geoserver_maximum_memory
-    geoserver_admin_password = var.geoserver_admin_password
-    product_catalogue_url    = local.product_catalogue_url
-    auth_host                = local.secret["auth_host"],
-    auth_client_id           = local.secret["auth_client_id"],
-    client_pem_thumbprint    = local.secret["client_pem_thumbprint"],
-    client_pem_key           = local.secret["client_pem_key"],
-    snapshot_iso_datetime    = (var.geoserver_snapshot_iso_datetime == null) ? timestamp(): var.geoserver_snapshot_iso_datetime 
-  }
-}

@@ -1,18 +1,20 @@
 
 
-
-resource "aws_ecs_cluster" "ga_sb_wh_geoserver_cluster" {
-  name = "ga_sb_${var.env}_geoserver_cluster"
+data "aws_ecs_cluster" "ga_sb_default_geoserver_cluster" {
+  cluster_name = "ga_sb_${var.env}_geoserver_cluster"
 }
 
+data "aws_iam_role" "ecs_task_execution_role_svc" {
+  name = "ga_sb_${var.env}_ecs_task_execution_role_svc"
+}
 
 resource "aws_ecs_task_definition" "geoserver" {
   family                   = "ga_sb_${var.env}_wh_geoserver"
   cpu                      = var.server_cpu
   memory                   = var.server_memory
   network_mode             = "awsvpc"
-  execution_role_arn       = var.ecs_task_execution_role_svc_arn
-  task_role_arn            = var.ecs_task_execution_role_svc_arn
+  execution_role_arn       = data.aws_iam_role.ecs_task_execution_role_svc.arn
+  task_role_arn            = data.aws_iam_role.ecs_task_execution_role_svc.arn
   requires_compatibilities = ["FARGATE"]
   container_definitions    = <<DEFINITION
 [
@@ -78,7 +80,8 @@ resource "aws_ecs_task_definition" "geoserver" {
     "portMappings": [
       {
         "containerPort": 8080,
-        "hostPort": 8080
+        "hostPort": 8080,
+        "protocol": "tcp"
       }
     ]
   }
@@ -89,20 +92,22 @@ DEFINITION
 
 resource "aws_ecs_service" "geoserver_service" {
   name            = "ga_sb_${var.env}_geoserver_service"
-  cluster         = aws_ecs_cluster.ga_sb_wh_geoserver_cluster.id
+  cluster         = data.aws_ecs_cluster.ga_sb_default_geoserver_cluster.id
   task_definition = aws_ecs_task_definition.geoserver.arn
   desired_count   = 1
   launch_type     = "FARGATE"
 
   load_balancer {
-    target_group_arn = var.aws_ecs_lb_target_group_geoserver_arn
+    target_group_arn = var.networking.aws_ecs_lb_target_group_geoserver_arn
     container_name   = "geoserver-task"
     container_port   = 8080
   }
 
   network_configuration {
-    subnets          = [var.networking.app_tier_subnets[0]]
-    security_groups  = [var.ecs_wh_security_group_id]
+    subnets          = [
+      var.networking.app_tier_subnets[0]]
+    security_groups  = [
+      var.networking.ecs_geoserver_security_group_id]
     assign_public_ip = false
   }
 
