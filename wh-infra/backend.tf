@@ -2,8 +2,8 @@
 terraform {
   backend "s3" {
     bucket   = "ausseabed-terraform-all"
-    key      = "env:/prod/terraform/wh-infra/terraform-aws-foundation-wh-infra.tfstate"
+    key      = "terraform/wh-infra/terraform-aws-foundation-wh-infra.tfstate"
     region   = "ap-southeast-2"
-    role_arn = "arn:aws:iam::007391679308:role/ga-aws-ausseabed-prod-terraform"
+    role_arn = "arn:aws:iam::007391679308:role/ga-aws-ausseabed-dev-terraform"
   }
 }
