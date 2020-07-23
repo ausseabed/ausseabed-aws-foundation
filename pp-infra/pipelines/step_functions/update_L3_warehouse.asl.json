@@ -1,0 +1,60 @@
+{
+  "Comment": "An example of the Amazon States Language using a map state to process elements of an array with a max concurrency of 2.",
+  "StartAt": "Identify Unprocessed Grids",
+  "States": {
+    "Identify Unprocessed Grids": {
+      "Type": "Task",
+      "Next": "Build Warehouse",
+      "Resource": "arn:aws:states:::lambda:invoke",
+      "ResultPath": "$.data.lambdaresult",
+      "OutputPath": "$.data.lambdaresult.Payload.body",
+      "Parameters": {
+        "FunctionName": "arn:aws:lambda:${region}:${account_id}:function:${prefix}_identify_unprocessed_grids:$LATEST",
+        "Payload": {
+          "action": "list",
+          "list-path.$": "$.list-path"
+        }
+      }
+    },
+    "Build Warehouse": {
+      "Type": "Map",
+      "ItemsPath": "$.product-ids",
+      "MaxConcurrency": 2,
+      "Next": "Final State",
+      "Iterator": {
+        "StartAt": "Select Unprocessed Grids",
+        "States": {
+          "Select Unprocessed Grids": {
+            "Type": "Task",
+            "Resource": "arn:aws:states:::lambda:invoke",
+            "ResultPath": "$.data.lambdaresult",
+            "OutputPath": "$.data.lambdaresult.Payload.body",
+            "Parameters": {
+              "FunctionName": "arn:aws:lambda:${region}:${account_id}:function:${prefix}_identify_unprocessed_grids:$LATEST",
+              "Payload": {
+                "action": "select",
+                "list-path.$": "$.list-path",
+                "index.$": "$.product-id"
+              }
+            },
+            "Next": "Build Product"
+          },
+          "Build Product": {
+            "Type": "Pass",
+            "Result": "Done!",
+            "Next": "Save Product Information"
+          },
+          "Save Product Information": {
+            "Type": "Pass",
+            "Result": "Done!",
+            "End": true
+          }
+        }
+      }
+    },
+    "Final State": {
+      "Type": "Pass",
+      "End": true
+    }
+  }
+}

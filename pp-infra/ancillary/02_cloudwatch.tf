@@ -2,7 +2,7 @@
 
 
 resource "aws_cloudwatch_log_group" "caris-version" {
-  name = "/ga_sb_${var.env}/ecs/caris-version"
+  name = "/ecs/ga_sb_${var.env}_caris-version"
 
   tags = {
     Environment = "poc"
@@ -11,7 +11,7 @@ resource "aws_cloudwatch_log_group" "caris-version" {
 }
 
 resource "aws_cloudwatch_log_group" "startstopec2" {
-  name = "/ga_sb_${var.env}/ecs/startstopec2"
+  name = "/ecs/ga_sb_${var.env}_startstopec2"
 
   tags = {
     Environment = "poc"
@@ -19,12 +19,22 @@ resource "aws_cloudwatch_log_group" "startstopec2" {
   }
 }
 
-resource "aws_cloudwatch_log_group" "step-functions" {
-  name = "/ga_sb_${var.env}/ecs/steps"
+resource "aws_cloudwatch_log_group" "containers" {
+  name = "/ecs/ga_sb_${var.env}_containers"
 
   tags = {
     Environment = "poc"
-    Application = "caris"
+    Application = "gdal"
+  }
+}
+
+
+resource "aws_cloudwatch_log_group" "lambda_function" {
+  name = "/aws/lambda/ga_sb_${var.env}_identify_unprocessed_grids"
+
+  tags = {
+    Environment = "lambda"
+    Application = "stepfunction"
   }
 }
 

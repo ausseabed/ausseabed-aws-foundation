@@ -23,7 +23,7 @@ module "ancillary" {
 
 module "networking" {
   source = "./networking"
-  env                         = local.env
+  env    = local.env
 
 }
 
@@ -56,6 +56,7 @@ module "pipelines" {
   aws_ecs_task_definition_caris_version_arn = module.compute.aws_ecs_task_definition_caris-version_arn
   aws_ecs_task_definition_startstopec2_arn  = module.compute.aws_ecs_task_definition_startstopec2_arn
   local_storage_folder                      = var.local_storage_folder
+  region                                    = var.aws_region
 }
 
 
@@ -85,7 +86,7 @@ module "identify_instrument_lambda_function" {
   source = "github.com/ausseabed/terraform-aws-lambda-builder"
 
   # Standard aws_lambda_function attributes.
-  function_name = "ga_sb_${local.env}-identify_instrument_files"
+  function_name = "ga_sb_${local.env}_identify_instrument_files"
   handler       = "identify_instrument_files.lambda_handler"
   runtime       = "python3.6"
   timeout       = 300
@@ -102,5 +103,26 @@ module "identify_instrument_lambda_function" {
   role_cloudwatch_logs = true
 }
 
+module "identify_unprocessed_grids_lambda_function" {
+  source = "github.com/ausseabed/terraform-aws-lambda-builder"
+
+  # Standard aws_lambda_function attributes.
+  function_name = "ga_sb_${local.env}_identify_unprocessed_grids"
+  handler       = "identify_unprocessed_grids.lambda_handler"
+  runtime       = "python3.6"
+  timeout       = 300
+  role          = module.ancillary.identify_instrument_files_role
+  create_role   = true
+  enabled       = true
+
+  # Enable build functionality.
+  build_mode = "LAMBDA"
+  source_dir = "${path.module}/src/lambda/identify_unprocessed_grids"
+  # filename   = "identify_unprocessed_grids.py"
+  s3_bucket = "ausseabed-processing-pipeline-tf-infra"
+
+  # Create and use a role with CloudWatch Logs permissions.
+  role_cloudwatch_logs = true
+}
 
 #carisbatch  --run FilterProcessedDepths   --filter-type SURFACE --surface ${var.local_storage_folder}\\GA-0364_BlueFin_MB\\BlueFin_2018-172_1m.csar --threshold-type STANDARD_DEVIATION --scalar 1.6 file:///${var.local_storage_folder}\\GA-0364_BlueFin_MB\\GA-0364_BlueFin_MB.hips

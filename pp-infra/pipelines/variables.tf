@@ -1,14 +1,13 @@
 
-variable env {}
-
-
 variable "networking" {
   type = object({
-    vpc_id = string,
+    vpc_id           = string,
     app_tier_subnets = list(string)
   })
 }
 
+variable "region" {}
+variable "env" {}
 
 variable "ausseabed_sm_role" {}
 
