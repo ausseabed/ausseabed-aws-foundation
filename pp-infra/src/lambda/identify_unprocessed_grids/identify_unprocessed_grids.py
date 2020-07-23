@@ -6,8 +6,24 @@ from get_secrets import get_secret
 from auth_broker import AuthBroker
 from product_database import ProductDatabase
 from product_catalogue_py_rest_client.models import ProductL3Dist, ProductL3Src, SurveyL3Relation, Survey
+
+from pythonjsonlogger import jsonlogger
+from step_function_action import StepFunctionAction
+
 logger = logging.getLogger()
+
+# Testing showed lambda sets up one default handler. If there are more,
+# something has changed and we want to fail so an operator can investigate.
+#assert len(logger.handlers) == 1
+
 logger.setLevel(logging.INFO)
+json_handler = logging.StreamHandler()
+formatter = jsonlogger.JsonFormatter(
+    fmt='%(asctime)s %(levelname)s %(name)s %(message)s'
+)
+json_handler.setFormatter(formatter)
+logger.addHandler(json_handler)
+# logger.removeHandler(logger.handlers[0])
 
 
 def lambda_handler(event, context):
@@ -23,15 +39,54 @@ def lambda_handler(event, context):
     auth = AuthBroker(warehouse_connection_json)
     token = auth.get_auth_token()
 
+    product_database = ProductDatabase(token, event["list-path"])
+    product_database.download_from_rest()
+
     # connect to database
     # download stuff
     # return pointers to stuff
     if (event["action"] == "list"):
-        product_database = ProductDatabase(token, event["list-path"])
-        output = {"product-ids": [{"product-id": 1},
-                                  {"product-id": 2}, {"product-id": 3}], "list-path": event["list-path"]}
+        logging.info("Found {} source products".format(len(
+            [product.id for product in product_database.l3_src_products])))
+
+        logging.info("Found {} products that have been processed".format(len(
+            [product.source_product.id for product in product_database.l3_dist_products])))
+
+        processed_product_ids = [product.source_product.id
+                                 for product in product_database.l3_dist_products]
+
+        unprocessed_products = [
+            product for product in product_database.l3_src_products if product.id not in processed_product_ids
+        ]
+
+        logging.info("Planning on processing {} products".format(
+            len(unprocessed_products)))
+
+        logging.info("Planning on processing: {}".format(" \n".join(
+            [product.name for product in unprocessed_products])))
+
+        output = {"product-ids": [{"product-id": product.id, "list-path": event["list-path"]}
+                                  for product in unprocessed_products]}
     elif (event["action"] == "select"):
-        output = {"product": {"name": "fred"}, "list-path": event["list-path"]}
+        selected_products = [
+            product for product in product_database.l3_src_products if product.id == event["product-id"]]
+
+        if (len(selected_products) == 0):
+            msg = "No product for id " + str(event["product-id"])
+            logging.error(msg)
+            return {
+                'statusCode': 400,
+                'body': msg
+            }
+
+        selected_product = selected_products[0]
+        logging.info("Planning on processing: {}".format(
+            selected_product.name))
+
+        step_function_action = StepFunctionAction(selected_product)
+        json_output = step_function_action.run_step_function()
+
+        output = {**event, **json_output}
 
     return {
         'statusCode': 200,
@@ -43,6 +98,8 @@ if __name__ == "__main__":
     logging.info("Starting")
     event = {}
     context = {}
-    event["action"] = "list"
-    event["list-path"] = "https://catalogue.dev.ausseabed.gov.au/rest"
+    # event["action"] = "list"
+    event["action"] = "select"
+    event["product-id"] = 99
+    event["list-path"] = "https://catalogue.ausseabed.gov.au/rest"
     lambda_handler(event, context)

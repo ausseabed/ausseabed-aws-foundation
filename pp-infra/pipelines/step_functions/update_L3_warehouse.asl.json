@@ -34,7 +34,7 @@
               "Payload": {
                 "action": "select",
                 "list-path.$": "$.list-path",
-                "index.$": "$.product-id"
+                "product-id.$": "$.product-id"
               }
             },
             "Next": "Build Product"
