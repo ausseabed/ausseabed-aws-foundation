@@ -23,7 +23,7 @@ resource "aws_ecs_task_definition" "caris-version" {
         "logDriver": "awslogs",
         "secretOptions": null,
         "options": {
-          "awslogs-group": "/ecs/caris-version",
+          "awslogs-group": "/ecs/ga_sb_${var.env}_caris-version",
           "awslogs-region": "ap-southeast-2",
           "awslogs-stream-prefix": "ecs"
         }
@@ -66,7 +66,7 @@ resource "aws_ecs_task_definition" "startstopec2" {
         "logDriver": "awslogs",
         "secretOptions": null,
         "options": {
-          "awslogs-group": "/ecs/startstopec2",
+          "awslogs-group": "/ecs/ga_sb_${var.env}_startstopec2",
           "awslogs-region": "ap-southeast-2",
           "awslogs-stream-prefix": "ecs"
         }
@@ -98,7 +98,7 @@ resource "aws_ecs_task_definition" "gdal" {
         "logDriver": "awslogs",
         "secretOptions": null,
         "options": {
-          "awslogs-group": "/ecs/steps",
+          "awslogs-group": "/ecs/ga_sb_${var.env}_containers",
           "awslogs-region": "ap-southeast-2",
           "awslogs-stream-prefix": "gdal"
         }
@@ -130,7 +130,7 @@ resource "aws_ecs_task_definition" "mbsystem" {
         "logDriver": "awslogs",
         "secretOptions": null,
         "options": {
-          "awslogs-group": "/ecs/steps",
+          "awslogs-group": "/ecs/ga_sb_${var.env}_containers",
           "awslogs-region": "ap-southeast-2",
           "awslogs-stream-prefix": "mbsystem"
         }
@@ -162,7 +162,7 @@ resource "aws_ecs_task_definition" "pdal" {
         "logDriver": "awslogs",
         "secretOptions": null,
         "options": {
-          "awslogs-group": "/ecs/steps",
+          "awslogs-group": "/ecs/ga_sb_${var.env}_containers",
           "awslogs-region": "ap-southeast-2",
           "awslogs-stream-prefix": "pdal"
         }
