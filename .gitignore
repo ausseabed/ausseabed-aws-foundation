@@ -5,3 +5,4 @@
 /pp-infra/*.py
 
 .vscode
+*.pyc
