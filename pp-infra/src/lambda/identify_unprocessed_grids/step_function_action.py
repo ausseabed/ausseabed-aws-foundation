@@ -2,17 +2,20 @@
 import logging
 
 from product_catalogue_py_rest_client.models import ProductL3Dist, ProductL3Src, RelationSummaryDto, Survey
+from product_database import ProductDatabase
 
 import json
 import re
+import uuid
+
 from src_dist_name import SrcDistName
 
 
 class StepFunctionAction():
 
-    def __init__(self, product_l3_src: ProductL3Src):
+    def __init__(self, product_l3_src: ProductL3Src, src_dist_name: SrcDistName):
         self.product_l3_src = product_l3_src
-        self.src_dist_name = SrcDistName(product_l3_src)
+        self.src_dist_name = src_dist_name
         self.srs_mapping = self.buildSrsMapping()
 
     def buildSrsMapping(self):
@@ -43,6 +46,7 @@ class StepFunctionAction():
         json_instruction = {'s3_src_tif': self.src_dist_name.s3_src_tif,
                             's3_dest_tif': self.src_dist_name.s3_dest_tif,
                             's3_hillshade_dest_tif': self.src_dist_name.s3_hillshade_dest_tif,
-                            's3_scaling_factor': str(multiplier)
+                            's3_scaling_factor': str(multiplier),
+                            'uuid': str(uuid.uuid4())
                             }
         return json_instruction

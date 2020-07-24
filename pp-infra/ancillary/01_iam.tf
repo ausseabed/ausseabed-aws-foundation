@@ -77,6 +77,15 @@ resource "aws_iam_role_policy" "ga_sb_pp_sfn_policy" {
         {
             "Effect": "Allow",
             "Action": [
+                "states:StartExecution"
+            ],
+            "Resource": [
+                "arn:aws:states:${var.region}:${local.account_id}:stateMachine:ga-sb-${var.env}-ausseabed-processing-pipeline-l3"
+            ]
+        },        
+        {
+            "Effect": "Allow",
+            "Action": [
                 "ecs:StopTask",
                 "ecs:DescribeTasks"
             ],
@@ -318,8 +327,8 @@ DOC
 }
 
 resource "aws_iam_role_policy" "identify_instrument_files-lambda-role-policy" {
-  name = "ga_sb_${var.env}_idy_instrument_files-policy"
-  role = aws_iam_role.identify_instrument_files-lambda-role.id
+  name   = "ga_sb_${var.env}_idy_instrument_files-policy"
+  role   = aws_iam_role.identify_instrument_files-lambda-role.id
   policy = <<DOC
 {
     "Version": "2012-10-17",
