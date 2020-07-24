@@ -61,7 +61,6 @@ def lambda_handler(event, context):
 
         unprocessed_products = [
             product for product in product_database.l3_src_products if product.id not in processed_product_ids
-            or ("Visioning" in product.name and "64" not in product.resolution)
         ]
 
         logging.info("Planning on processing {} products".format(
