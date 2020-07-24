@@ -33,7 +33,7 @@
     "Build Warehouse": {
       "Type": "Map",
       "ItemsPath": "$.product-ids",
-      "MaxConcurrency": 1,
+      "MaxConcurrency": 20,
       "Next": "Final State",
       "Iterator": {
         "StartAt": "Select Unprocessed Grids",
@@ -86,7 +86,9 @@
               "Payload": {
                 "action": "save",
                 "cat-url.$": "$.cat-url",
-                "product-id.$": "$.product-id"
+                "product-id.$": "$.product-id",
+                "bucket.$": "$.bucket",
+                "uuid.$": "$.uuid"
               }
             },
             "End": true
