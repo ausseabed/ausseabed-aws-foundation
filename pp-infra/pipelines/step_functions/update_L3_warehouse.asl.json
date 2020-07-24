@@ -50,7 +50,8 @@
                 "cat-url.$": "$.cat-url",
                 "product-id.$": "$.product-id",
                 "uuid.$": "$.uuid",
-                "bucket.$": "$.bucket"
+                "bucket.$": "$.bucket",
+                "n.$": "$.n"
               }
             },
             "Next": "Build Product"

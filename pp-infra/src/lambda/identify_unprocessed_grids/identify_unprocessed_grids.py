@@ -7,7 +7,7 @@ from get_secrets import get_secret
 from auth_broker import AuthBroker
 from product_database import ProductDatabase
 from product_catalogue_py_rest_client.models import ProductL3Dist, ProductL3Src, SurveyL3Relation, Survey
-
+from time import sleep
 from update_database_action import UpdateDatabaseAction
 
 from src_dist_name import SrcDistName
@@ -69,7 +69,11 @@ def lambda_handler(event, context):
         logging.info("Planning on processing: {}".format(" \n".join(
             [product.name for product in unprocessed_products])))
 
-        output = {"product-ids": [{"product-id": product.id, "uuid": str(uuid.uuid4()), "cat-url": event["cat-url"], "bucket": event["bucket"]}
+        output = {"product-ids": [{"product-id": product.id,
+                                   "uuid": str(uuid.uuid4()),
+                                   "cat-url": event["cat-url"],
+                                   "bucket": event["bucket"],
+                                   "n":unprocessed_products.index(product)}
                                   for product in unprocessed_products], "proceed": event["proceed"]}
     elif (event["action"] == "select"):
         selected_products = [
@@ -86,6 +90,10 @@ def lambda_handler(event, context):
         selected_product = selected_products[0]
         logging.info("Planning on processing: {}".format(
             selected_product.name))
+
+        sleeptime = event["n"]*10
+        logging.info("Pausing: {} seconds".format(sleeptime))
+        sleep(sleeptime)
 
         names = SrcDistName(product_database, selected_product,
                             event["bucket"], event["uuid"])
