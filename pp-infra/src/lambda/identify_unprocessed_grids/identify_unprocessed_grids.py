@@ -7,6 +7,9 @@ from auth_broker import AuthBroker
 from product_database import ProductDatabase
 from product_catalogue_py_rest_client.models import ProductL3Dist, ProductL3Src, SurveyL3Relation, Survey
 
+from update_database_action import UpdateDatabaseAction
+
+from src_dist_name import SrcDistName
 from pythonjsonlogger import jsonlogger
 from step_function_action import StepFunctionAction
 
@@ -28,18 +31,18 @@ logger.addHandler(json_handler)
 
 def lambda_handler(event, context):
     logging.info("Running the envent handler")
-    logging.info(event)
-    logging.info(context)
+    logging.debug(event)
+    logging.debug(context)
 
     logging.info(event["action"])
-    logging.info(event["list-path"])
+    logging.info(event["cat-url"])
 
     warehouse_connection_json = json.loads(get_secret("wh-infra.auto.tfvars"))
 
     auth = AuthBroker(warehouse_connection_json)
     token = auth.get_auth_token()
 
-    product_database = ProductDatabase(token, event["list-path"])
+    product_database = ProductDatabase(token, event["cat-url"])
     product_database.download_from_rest()
 
     # connect to database
@@ -65,8 +68,8 @@ def lambda_handler(event, context):
         logging.info("Planning on processing: {}".format(" \n".join(
             [product.name for product in unprocessed_products])))
 
-        output = {"product-ids": [{"product-id": product.id, "list-path": event["list-path"]}
-                                  for product in unprocessed_products]}
+        output = {"product-ids": [{"product-id": product.id, "cat-url": event["cat-url"], "bucket": event["bucket"]}
+                                  for product in unprocessed_products], "proceed": event["proceed"]}
     elif (event["action"] == "select"):
         selected_products = [
             product for product in product_database.l3_src_products if product.id == event["product-id"]]
@@ -83,10 +86,32 @@ def lambda_handler(event, context):
         logging.info("Planning on processing: {}".format(
             selected_product.name))
 
-        step_function_action = StepFunctionAction(selected_product)
+        names = SrcDistName(product_database, selected_product,
+                            event["bucket"], event["uuid"])
+        step_function_action = StepFunctionAction(selected_product, names)
         json_output = step_function_action.run_step_function()
 
         output = {**event, **json_output}
+
+    elif (event["action"] == "save"):
+        selected_products = [
+            product for product in product_database.l3_src_products if product.id == event["product-id"]]
+
+        if (len(selected_products) == 0):
+            msg = "No product for id " + str(event["product-id"])
+            logging.error(msg)
+            return {
+                'statusCode': 400,
+                'body': msg
+            }
+
+        selected_product = selected_products[0]
+        logging.info("Planning on processing: {}".format(
+            selected_product.name))
+
+        update_database_action = UpdateDatabaseAction(
+            selected_product, event["cat-url"], self.token)
+        update_database_action.update()
 
     return {
         'statusCode': 200,
@@ -101,5 +126,7 @@ if __name__ == "__main__":
     # event["action"] = "list"
     event["action"] = "select"
     event["product-id"] = 99
-    event["list-path"] = "https://catalogue.ausseabed.gov.au/rest"
+    event["cat-url"] = "https://catalogue.ausseabed.gov.au/rest"
+    event["uuid"] = "123"
+    event["bucket"] = "ausseabed-public-bathymetry-nonprod"
     lambda_handler(event, context)
