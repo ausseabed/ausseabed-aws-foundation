@@ -52,18 +52,37 @@ resource "aws_iam_role_policy" "ga_sb_pp_sfn_policy" {
                 "lambda:InvokeFunction"
             ],
             "Resource": [
-                "arn:aws:lambda:${var.region}:${local.account_id}:function:getResumeFromStep:$LATEST"
+                "arn:aws:lambda:${var.region}:${local.account_id}:function:getResumeFromStep:$LATEST",
+                "arn:aws:lambda:${var.region}:${local.account_id}:function:ga_sb_${var.env}_identify_instrument_files:$LATEST",
+                "arn:aws:lambda:${var.region}:${local.account_id}:function:ga_sb_${var.env}_identify_unprocessed_grids:$LATEST"
             ]
+        },
+        {
+            "Sid": "forCloudWatch",
+            "Effect": "Allow",
+            "Action": [
+                "logs:CreateLogDelivery",
+                "logs:GetLogDelivery",
+                "logs:UpdateLogDelivery",
+                "logs:ListLogDeliveries",
+                "logs:PutResourcePolicy",
+                "logs:DescribeResourcePolicies",
+                "logs:DescribeLogGroups",
+                "logs:CreateLogGroup",
+                "logs:CreateLogStream",
+                "logs:PutLogEvents"
+            ],
+            "Resource": "*"
         },
         {
             "Effect": "Allow",
             "Action": [
-                "lambda:InvokeFunction"
+                "states:StartExecution"
             ],
             "Resource": [
-                "arn:aws:lambda:${var.region}:${local.account_id}:function:identify_instrument_files:$LATEST"
+                "arn:aws:states:${var.region}:${local.account_id}:stateMachine:ga-sb-${var.env}-ausseabed-processing-pipeline-l3"
             ]
-        },
+        },        
         {
             "Effect": "Allow",
             "Action": [
@@ -308,13 +327,27 @@ DOC
 }
 
 resource "aws_iam_role_policy" "identify_instrument_files-lambda-role-policy" {
-  name = "ga_sb_${var.env}_idy_instrument_files-policy"
-  role = aws_iam_role.identify_instrument_files-lambda-role.id
-
+  name   = "ga_sb_${var.env}_idy_instrument_files-policy"
+  role   = aws_iam_role.identify_instrument_files-lambda-role.id
   policy = <<DOC
 {
     "Version": "2012-10-17",
     "Statement": [
+        {
+            "Sid": "forCloudwatch",
+            "Effect": "Allow",
+            "Action": [
+              "logs:CreateLogGroup",
+              "logs:CreateLogDelivery",
+              "logs:GetLogDelivery",
+              "logs:UpdateLogDelivery",
+              "logs:ListLogDeliveries",
+              "logs:PutResourcePolicy",
+              "logs:DescribeResourcePolicies",
+              "logs:DescribeLogGroups"
+            ],
+            "Resource": "arn:aws:logs:${var.region}:${local.account_id}:*"
+        },
         {
             "Sid": "forCloudtrail",
             "Effect": "Allow",
@@ -322,7 +355,7 @@ resource "aws_iam_role_policy" "identify_instrument_files-lambda-role-policy" {
                 "logs:CreateLogStream",
                 "logs:PutLogEvents"
             ],
-            "Resource": "arn:aws:logs:${var.region}:${local.account_id}:log-group:/aws/lambda/identify_instrument_files:*"
+            "Resource": "arn:aws:logs:${var.region}:${local.account_id}:log-group:/aws/lambda/ga_sb_${var.env}_identify_unprocessed_grids:*"
         },
         {
             "Sid": "forStepFunctions",
@@ -346,10 +379,16 @@ resource "aws_iam_role_policy" "identify_instrument_files-lambda-role-policy" {
             "Effect": "Allow"
         },
         {
-            "Sid": "forCloudwatch",
             "Effect": "Allow",
-            "Action": "logs:CreateLogGroup",
-            "Resource": "arn:aws:logs:${var.region}:${local.account_id}:*"
+            "Action": [
+                "secretsmanager:GetResourcePolicy",
+                "secretsmanager:GetSecretValue",
+                "secretsmanager:DescribeSecret",
+                "secretsmanager:ListSecretVersionIds"
+            ],
+            "Resource": [
+                "arn:aws:secretsmanager:${var.region}:${local.account_id}:secret:wh-infra.auto.tfvars*"
+            ]
         }
     ]
 }

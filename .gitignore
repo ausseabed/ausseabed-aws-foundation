@@ -4,3 +4,6 @@
 *.iml
 /pp-infra/*.py
 
+.vscode
+*.pyc
+*.swp
