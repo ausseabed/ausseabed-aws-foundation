@@ -49,6 +49,7 @@
                 "action": "select",
                 "cat-url.$": "$.cat-url",
                 "product-id.$": "$.product-id",
+                "uuid.$": "$.uuid",
                 "bucket.$": "$.bucket"
               }
             },
@@ -56,12 +57,14 @@
           },
           "Build Product": {
             "Type": "Task",
-            "Resource": "arn:aws:states:::states:startExecution.sync",
+            "Resource": "arn:aws:states:::states:startExecution.sync:2",
             "Parameters": {
               "Input": {
                 "AWS_STEP_FUNCTIONS_STARTED_BY_EXECUTION_ID.$": "$$.Execution.Id",
                 "cat-url.$": "$.cat-url",
                 "product-id.$": "$.product-id",
+                "uuid.$": "$.uuid",
+                "bucket.$": "$.bucket",
                 "s3_src_tif.$": "$.s3_src_tif",
                 "s3_dest_tif.$": "$.s3_dest_tif",
                 "s3_hillshade_dest_tif.$": "$.s3_hillshade_dest_tif",
@@ -75,6 +78,7 @@
           "Save Product Information": {
             "Type": "Task",
             "Resource": "arn:aws:states:::lambda:invoke",
+            "InputPath": "$.Input",
             "ResultPath": "$.data.lambdaresult",
             "OutputPath": "$.data.lambdaresult.Payload.body",
             "Parameters": {
@@ -82,8 +86,7 @@
               "Payload": {
                 "action": "save",
                 "cat-url.$": "$.cat-url",
-                "product-id.$": "$.product-id",
-                "bucket.$": "$.bucket"
+                "product-id.$": "$.product-id"
               }
             },
             "End": true

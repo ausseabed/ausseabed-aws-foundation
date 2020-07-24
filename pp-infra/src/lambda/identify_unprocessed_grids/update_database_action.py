@@ -9,9 +9,9 @@ import re
 
 class UpdateDatabaseAction():
 
-    def __init__(self, product_l3_src: ProductL3Src, database_url, token):
+    def __init__(self, product_l3_src: ProductL3Src, database_url, token, src_dist_name: SrcDistName):
         self.product_l3_src = product_l3_src
-        self.src_dist_name = SrcDistName(product_l3_src)
+        self.src_dist_name = src_dist_name
         self.database_url = database_url
         self.token = token
 

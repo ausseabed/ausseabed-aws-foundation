@@ -1,6 +1,7 @@
 import json
 import argparse
 import re
+import uuid
 import logging
 from get_secrets import get_secret
 from auth_broker import AuthBroker
@@ -60,6 +61,7 @@ def lambda_handler(event, context):
 
         unprocessed_products = [
             product for product in product_database.l3_src_products if product.id not in processed_product_ids
+            or ("Visioning" in product.name and "64" not in product.resolution)
         ]
 
         logging.info("Planning on processing {} products".format(
@@ -68,7 +70,7 @@ def lambda_handler(event, context):
         logging.info("Planning on processing: {}".format(" \n".join(
             [product.name for product in unprocessed_products])))
 
-        output = {"product-ids": [{"product-id": product.id, "cat-url": event["cat-url"], "bucket": event["bucket"]}
+        output = {"product-ids": [{"product-id": product.id, "uuid": str(uuid.uuid4()), "cat-url": event["cat-url"], "bucket": event["bucket"]}
                                   for product in unprocessed_products], "proceed": event["proceed"]}
     elif (event["action"] == "select"):
         selected_products = [
@@ -109,9 +111,12 @@ def lambda_handler(event, context):
         logging.info("Planning on processing: {}".format(
             selected_product.name))
 
+        names = SrcDistName(product_database, selected_product,
+                            event["bucket"], event["uuid"])
         update_database_action = UpdateDatabaseAction(
-            selected_product, event["cat-url"], self.token)
+            selected_product, event["cat-url"], token, names)
         update_database_action.update()
+        output = "Success"
 
     return {
         'statusCode': 200,
@@ -124,9 +129,10 @@ if __name__ == "__main__":
     event = {}
     context = {}
     # event["action"] = "list"
-    event["action"] = "select"
+    # event["action"] = "select"
+    event["action"] = "save"
     event["product-id"] = 99
-    event["cat-url"] = "https://catalogue.ausseabed.gov.au/rest"
+    event["cat-url"] = "https://catalogue.dev.ausseabed.gov.au/rest"
     event["uuid"] = "123"
     event["bucket"] = "ausseabed-public-bathymetry-nonprod"
     lambda_handler(event, context)
