@@ -47,6 +47,15 @@
                   ]
                 }
               },
+              "Retry": [
+                {
+                  "ErrorEquals": [
+                    "ECS.AmazonECSException"
+                  ],
+                  "IntervalSeconds": 3,
+                  "MaxAttempts": 5
+                }
+              ],
               "End": true,
               "TimeoutSeconds": 60000
             }
