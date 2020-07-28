@@ -13,10 +13,11 @@ from src_dist_name import SrcDistName
 
 class StepFunctionAction():
 
-    def __init__(self, product_l3_src: ProductL3Src, src_dist_name: SrcDistName):
+    def __init__(self, product_l3_src: ProductL3Src, src_dist_name: SrcDistName, uuid_ref):
         self.product_l3_src = product_l3_src
         self.src_dist_name = src_dist_name
         self.srs_mapping = self.buildSrsMapping()
+        self.uuid_ref = uuid_ref
 
     def buildSrsMapping(self):
         with open('reference-system.json') as f:
@@ -47,6 +48,6 @@ class StepFunctionAction():
                             's3_dest_tif': self.src_dist_name.s3_dest_tif,
                             's3_hillshade_dest_tif': self.src_dist_name.s3_hillshade_dest_tif,
                             's3_scaling_factor': str(multiplier),
-                            'uuid': str(uuid.uuid4())
+                            'uuid': self.uuid_ref
                             }
         return json_instruction
