@@ -97,7 +97,8 @@ def lambda_handler(event, context):
 
         names = SrcDistName(product_database, selected_product,
                             event["bucket"], event["uuid"])
-        step_function_action = StepFunctionAction(selected_product, names)
+        step_function_action = StepFunctionAction(
+            selected_product, names, event["uuid"])
         json_output = step_function_action.run_step_function()
 
         output = {**event, **json_output}
