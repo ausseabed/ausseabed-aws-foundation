@@ -11,7 +11,7 @@ locals {
     "ausseabed_sm_role"                         = var.ausseabed_sm_role
     "aws_ecs_cluster_arn"                       = var.aws_ecs_cluster_arn
     "aws_ecs_task_definition_gdal_arn"          = var.aws_ecs_task_definition_gdal_arn
-    "aws_ecs_task_definition_caris_sg"          = "sg-0fbe854781a4128f0" #TODO
+    "aws_ecs_task_definition_caris_sg"          = var.networking.pipelines_sg
     "aws_ecs_task_definition_caris_subnet"      = var.networking.app_tier_subnets[0]
     "aws_ecs_task_definition_mbsystem_arn"      = var.aws_ecs_task_definition_mbsystem_arn
     "aws_ecs_task_definition_pdal_arn"          = var.aws_ecs_task_definition_pdal_arn

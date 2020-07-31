@@ -16,11 +16,11 @@ output "app_tier_subnets" {
   value = data.aws_subnet_ids.app_tier_subnets.ids
 }
 
-//
-//output "public_sg" {
-//  value = aws_security_group.tf_public_sg.id
-//}
-//
+
+output "pipelines_sg" {
+  value = aws_security_group.ga_sb_env_pipelines_sg.id
+}
+
 //
 //output "private_sg" {
 //  value = aws_security_group.tf_private_sg.id

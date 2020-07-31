@@ -1,3 +1,8 @@
+variable "env" {
+  type = string
+  default = null
+}
+
 variable "aws_region" {}
 
 #------ storage variables
@@ -11,6 +16,7 @@ variable "fargate_memory"{}
 variable "caris_caller_image"{}
 variable "startstopec2_image"{}
 
+variable "ecr_url" {}
 variable "gdal_image"{}
 variable "mbsystem_image"{}
 variable "pdal_image"{}

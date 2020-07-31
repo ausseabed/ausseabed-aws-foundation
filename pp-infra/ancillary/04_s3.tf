@@ -7,6 +7,11 @@ resource "aws_s3_bucket" "bathymetry-survey" {
   bucket = "ga-sb-${var.env}-bathymetry-survey"
 }
 
+resource "aws_s3_bucket" "processing-pipeline-support" {
+  bucket = "ausseabed-processing-pipeline-${var.env}-support"
+}
+
+
 
 
 resource "aws_s3_bucket" "bucket-for-cloudtrail" {

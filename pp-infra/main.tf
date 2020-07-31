@@ -1,18 +1,10 @@
 locals {
-  env = terraform.workspace
+  env = (var.env != null) ? var.env : terraform.workspace
 }
 
 provider "aws" {
   region  = var.aws_region
   version = "2.54"
-}
-
-terraform {
-  backend "s3" {
-    bucket = "ausseabed-aws-foundation-tf-infra"
-    key    = "terraform/terraform-aws-foundation-pp-infra.tfstate"
-    region = "ap-southeast-2"
-  }
 }
 
 module "ancillary" {
@@ -36,9 +28,9 @@ module "compute" {
   fargate_memory              = var.fargate_memory
   caris_caller_image          = var.caris_caller_image
   startstopec2_image          = var.startstopec2_image
-  gdal_image                  = var.gdal_image
-  mbsystem_image              = var.mbsystem_image
-  pdal_image                  = var.pdal_image
+  gdal_image                  = "${var.ecr_url}/${var.gdal_image}"
+  mbsystem_image              = "${var.ecr_url}/${var.mbsystem_image}"
+  pdal_image                  = "${var.ecr_url}/${var.pdal_image}"
   ecs_task_execution_role_arn = module.ancillary.ecs_task_execution_role_arn
 }
 
@@ -119,7 +111,7 @@ module "identify_unprocessed_grids_lambda_function" {
   build_mode = "LAMBDA"
   source_dir = "${path.module}/src/lambda/identify_unprocessed_grids"
   # filename   = "identify_unprocessed_grids.py"
-  s3_bucket = "ausseabed-processing-pipeline-tf-infra"
+  s3_bucket = "ausseabed-processing-pipeline-${local.env}-support"
 
   # Create and use a role with CloudWatch Logs permissions.
   role_cloudwatch_logs = true
