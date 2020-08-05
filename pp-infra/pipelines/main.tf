@@ -9,7 +9,7 @@ locals {
     "prefix"                                    = "ga_sb_${var.env}"
     "caris_ip"                                  = "172.31.11.235"
     "ausseabed_sm_role"                         = var.ausseabed_sm_role
-    "aws_ecs_cluster_arn"                       = var.aws_ecs_cluster_arn
+    "aws_ecs_cluster_arn"                       = var.aws_ecs_cluster_main.arn
     "aws_ecs_task_definition_gdal_arn"          = var.aws_ecs_task_definition_gdal_arn
     "aws_ecs_task_definition_caris_sg"          = var.networking.pipelines_sg
     "aws_ecs_task_definition_caris_subnet"      = var.networking.app_tier_subnets[0]
@@ -24,8 +24,9 @@ locals {
       "change vessel config file to calculated", "Compute GPS Vertical Adjustment", "change vessel config file to original",
       "Georeference HIPS Bathymetry", "Upload checkpoint 3 to s3", "Create Variable Resolution HIPS Grid With Cube", "Upload checkpoint 5 to s3",
     "Export raster as BAG", "Export raster as LAS"]
-    "runtask"    = "\"Type\":\"Task\",\"Resource\":\"arn:aws:states:::ecs:runTask.sync\",\"ResultPath\": \"$.previous_step__result\""
-    "parameters" = "\"LaunchType\":\"FARGATE\",\"Cluster\":\"${var.aws_ecs_cluster_arn}\",\"TaskDefinition\":\"${var.aws_ecs_task_definition_caris_version_arn}\",\"NetworkConfiguration\":{\"AwsvpcConfiguration\":{\"AssignPublicIp\":\"ENABLED\",\"SecurityGroups\":[\"TODO\"],\"Subnets\":[\"TODO\"]}}"
+    "runtask"         = "\"Type\":\"Task\",\"Resource\":\"arn:aws:states:::ecs:runTask.sync\",\"ResultPath\": \"$.previous_step__result\""
+    "parameters"      = "\"LaunchType\":\"FARGATE\",\"Cluster\":\"${var.aws_ecs_cluster_main.arn}\",\"TaskDefinition\":\"${var.aws_ecs_task_definition_caris_version_arn}\",\"NetworkConfiguration\":{\"AwsvpcConfiguration\":{\"AssignPublicIp\":\"ENABLED\",\"SecurityGroups\":[\"TODO\"],\"Subnets\":[\"TODO\"]}}"
+    "ecs_task_prefix" = "https://${var.region}.console.aws.amazon.com/ecs/home?region=${var.region}#/clusters/${var.aws_ecs_cluster_main.cluster_name}/tasks/{0}/details"
   }
 }
 

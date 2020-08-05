@@ -13,12 +13,13 @@ from update_database_action import UpdateDatabaseAction
 from src_dist_name import SrcDistName
 from pythonjsonlogger import jsonlogger
 from step_function_action import StepFunctionAction
-
+from datetime import datetime, timezone
+from datetime import timedelta
 logger = logging.getLogger()
 
 # Testing showed lambda sets up one default handler. If there are more,
 # something has changed and we want to fail so an operator can investigate.
-#assert len(logger.handlers) == 1
+assert len(logger.handlers) == 1
 
 logger.setLevel(logging.INFO)
 json_handler = logging.StreamHandler()
@@ -27,7 +28,21 @@ formatter = jsonlogger.JsonFormatter(
 )
 json_handler.setFormatter(formatter)
 logger.addHandler(json_handler)
-# logger.removeHandler(logger.handlers[0])
+logger.removeHandler(logger.handlers[0])
+
+"""
+lambda handler is the entry point for functions of the L3 Processing Pipeline
+
+A series of functions is bundled into one entry point to reduce the amount of 
+terraform code that is necessary to orchestrate and manage the workflow.
+
+The actions that are handled include:
+- parse-arn (a small regex for turning a task-arn into link to a details tab)
+- list - list all the products that are yet to be processed and create a map index
+- select - select one product for processing from a map index
+- save - save details about the processed product to the product catalogue
+
+"""
 
 
 def lambda_handler(event, context):
@@ -36,8 +51,18 @@ def lambda_handler(event, context):
     logging.debug(context)
 
     logging.info(event["action"])
-    logging.info(event["cat-url"])
 
+    if (event["action"] == "parse-arn"):
+        task_id = re.sub(".*\/", "", event["task-arn"])
+        return {
+            'statusCode': 200,
+            'body': {
+                'task-arn': event["task-arn"],
+                'ecs-describe-page': event["parse-string"].format(task_id)
+            }
+        }
+
+    logging.info(event["cat-url"])
     warehouse_connection_json = json.loads(get_secret("wh-infra.auto.tfvars"))
 
     auth = AuthBroker(warehouse_connection_json)
@@ -69,12 +94,23 @@ def lambda_handler(event, context):
         logging.info("Planning on processing: {}".format(" \n".join(
             [product.name for product in unprocessed_products])))
 
-        output = {"product-ids": [{"product-id": product.id,
-                                   "uuid": str(uuid.uuid4()),
-                                   "cat-url": event["cat-url"],
-                                   "bucket": event["bucket"],
-                                   "n":unprocessed_products.index(product)}
-                                  for product in unprocessed_products], "proceed": event["proceed"]}
+        output = {"product-ids":
+                  [{"product-id": product.id,
+                    "uuid": product_uuid,
+                    "cat-url": event["cat-url"],
+                    "bucket": event["bucket"],
+                    "build-name": re.sub("[^a-zA-Z0-9]", "_", product.name)[0:39] + "_" + product_uuid,
+                    "est": (datetime.utcnow() +
+                            timedelta(
+                        seconds=unprocessed_products.index(product)*10)
+                    ).isoformat('T', timespec='seconds') + 'Z'}
+                   for (product, product_uuid) in
+                   [(product, str(uuid.uuid4()))
+                    for product in unprocessed_products
+                    ]
+                   ],
+                  "proceed": event["proceed"]
+                  }
     elif (event["action"] == "select"):
         selected_products = [
             product for product in product_database.l3_src_products if product.id == event["product-id"]]
@@ -90,10 +126,6 @@ def lambda_handler(event, context):
         selected_product = selected_products[0]
         logging.info("Planning on processing: {}".format(
             selected_product.name))
-
-        sleeptime = event["n"]*10
-        logging.info("Pausing: {} seconds".format(sleeptime))
-        sleep(sleeptime)
 
         names = SrcDistName(product_database, selected_product,
                             event["bucket"], event["uuid"])
@@ -132,6 +164,7 @@ def lambda_handler(event, context):
     }
 
 
+# Main is only called when testing/debugging
 if __name__ == "__main__":
     logging.info("Starting")
     event = {}

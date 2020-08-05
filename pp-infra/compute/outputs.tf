@@ -1,5 +1,5 @@
-output "aws_ecs_cluster_arn" {
-  value = data.aws_ecs_cluster.main.arn
+output "aws_ecs_cluster_main" {
+  value = data.aws_ecs_cluster.main
 }
 
 output "aws_ecs_task_definition_caris-version_arn" {

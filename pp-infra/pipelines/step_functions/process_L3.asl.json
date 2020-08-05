@@ -56,8 +56,23 @@
                   "MaxAttempts": 5
                 }
               ],
-              "End": true,
+              "Next": "Overlay Task Arn",
               "TimeoutSeconds": 60000
+            },
+            "Overlay Task Arn": {
+              "Type": "Task",
+              "Resource": "arn:aws:states:::lambda:invoke",
+              "ResultPath": "$.data.lambdaresult",
+              "OutputPath": "$.data.lambdaresult.Payload.body",
+              "Parameters": {
+                "FunctionName": "arn:aws:lambda:${region}:${account_id}:function:${prefix}_identify_unprocessed_grids:$LATEST",
+                "Payload": {
+                  "action": "parse-arn",
+                  "task-arn.$": "$.previous_step__result.TaskArn",
+                  "parse-string": "${ecs_task_prefix}"
+                }
+              },
+              "End": true
             }
           }
         },
@@ -101,8 +116,23 @@
                   ]
                 }
               },
-              "End": true,
+              "Next": "Raster To Polygon Task Arn",
               "TimeoutSeconds": 60000
+            },
+            "Raster To Polygon Task Arn": {
+              "Type": "Task",
+              "Resource": "arn:aws:states:::lambda:invoke",
+              "ResultPath": "$.data.lambdaresult",
+              "OutputPath": "$.data.lambdaresult.Payload.body",
+              "Parameters": {
+                "FunctionName": "arn:aws:lambda:${region}:${account_id}:function:${prefix}_identify_unprocessed_grids:$LATEST",
+                "Payload": {
+                  "action": "parse-arn",
+                  "task-arn.$": "$.previous_step__result.TaskArn",
+                  "parse-string": "${ecs_task_prefix}"
+                }
+              },
+              "End": true
             }
           }
         },
@@ -153,8 +183,23 @@
                   ]
                 }
               },
-              "End": true,
+              "Next": "Hillshade Task Arn",
               "TimeoutSeconds": 60000
+            },
+            "Hillshade Task Arn": {
+              "Type": "Task",
+              "Resource": "arn:aws:states:::lambda:invoke",
+              "ResultPath": "$.data.lambdaresult",
+              "OutputPath": "$.data.lambdaresult.Payload.body",
+              "Parameters": {
+                "FunctionName": "arn:aws:lambda:${region}:${account_id}:function:${prefix}_identify_unprocessed_grids:$LATEST",
+                "Payload": {
+                  "action": "parse-arn",
+                  "task-arn.$": "$.previous_step__result.TaskArn",
+                  "parse-string": "${ecs_task_prefix}"
+                }
+              },
+              "End": true
             }
           }
         }

@@ -36,8 +36,13 @@
       "MaxConcurrency": 20,
       "Next": "Final State",
       "Iterator": {
-        "StartAt": "Select Unprocessed Grids",
+        "StartAt": "Avoid Collisions Pause",
         "States": {
+          "Avoid Collisions Pause": {
+            "Type": "Wait",
+            "TimestampPath": "$.est",
+            "Next": "Select Unprocessed Grids"
+          },
           "Select Unprocessed Grids": {
             "Type": "Task",
             "Resource": "arn:aws:states:::lambda:invoke",
@@ -50,8 +55,8 @@
                 "cat-url.$": "$.cat-url",
                 "product-id.$": "$.product-id",
                 "uuid.$": "$.uuid",
-                "bucket.$": "$.bucket",
-                "n.$": "$.n"
+                "build-name.$": "$.build-name",
+                "bucket.$": "$.bucket"
               }
             },
             "Next": "Build Product"
@@ -72,9 +77,17 @@
                 "s3_scaling_factor.$": "$.s3_scaling_factor"
               },
               "StateMachineArn": "arn:aws:states:${region}:${account_id}:stateMachine:${aws_step_function_process_l3_name}",
-              "Name.$": "$.uuid"
+              "Name.$": "$.build-name"
             },
-            "Next": "Save Product Information"
+            "Next": "Save Product Information",
+            "Catch": [
+              {
+                "ErrorEquals": [
+                  "States.ALL"
+                ],
+                "Next": "Finish Iteration"
+              }
+            ]
           },
           "Save Product Information": {
             "Type": "Task",
@@ -92,6 +105,10 @@
                 "uuid.$": "$.uuid"
               }
             },
+            "Next": "Finish Iteration"
+          },
+          "Finish Iteration": {
+            "Type": "Pass",
             "End": true
           }
         }
