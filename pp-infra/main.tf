@@ -40,7 +40,7 @@ module "pipelines" {
   env                                  = local.env
   networking                           = module.networking
   ausseabed_sm_role                    = module.ancillary.ga_sb_pp_sfn_role
-  aws_ecs_cluster_arn                  = module.compute.aws_ecs_cluster_arn
+  aws_ecs_cluster_main                 = module.compute.aws_ecs_cluster_main
   aws_ecs_task_definition_gdal_arn     = module.compute.aws_ecs_task_definition_gdal_arn
   aws_ecs_task_definition_mbsystem_arn = module.compute.aws_ecs_task_definition_mbsystem_arn
   aws_ecs_task_definition_pdal_arn     = module.compute.aws_ecs_task_definition_pdal_arn

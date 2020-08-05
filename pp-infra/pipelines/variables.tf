@@ -12,7 +12,7 @@ variable "env" {}
 
 variable "ausseabed_sm_role" {}
 
-variable "aws_ecs_cluster_arn" {}
+variable "aws_ecs_cluster_main" {}
 variable "aws_ecs_task_definition_gdal_arn" {}
 variable "aws_ecs_task_definition_mbsystem_arn" {}
 variable "aws_ecs_task_definition_pdal_arn" {}
