@@ -21,26 +21,28 @@ resource "aws_ecs_service" "ga_sb_pc_service" {
   }
 
   network_configuration {
-    subnets          = [
-      var.networking.app_tier_subnets[0]]
-    security_groups  = [
-      var.networking.ecs_pc_security_group_id]
+    subnets = [
+    var.networking.app_tier_subnets[0]]
+    security_groups = [
+    var.networking.ecs_pc_security_group_id]
     assign_public_ip = false
   }
 
 }
-
+locals {
+  apc_version = regex(".*:([^:]*)", var.client_image)[0]
+}
 # TODO need to specify this for product catalogue
 resource "aws_ecs_task_definition" "ga_sb_pc_serverclient" {
-  family                   = "ga_sb_${var.env}_pc_serverclient"
-  cpu                      = var.server_cpu
-  memory                   = var.server_memory
-  network_mode             = "awsvpc"
-  execution_role_arn       = data.aws_iam_role.ecs_task_execution_role_svc.arn
-  task_role_arn            = data.aws_iam_role.ecs_task_execution_role_svc.arn
+  family             = "ga_sb_${var.env}_pc_serverclient"
+  cpu                = var.server_cpu
+  memory             = var.server_memory
+  network_mode       = "awsvpc"
+  execution_role_arn = data.aws_iam_role.ecs_task_execution_role_svc.arn
+  task_role_arn      = data.aws_iam_role.ecs_task_execution_role_svc.arn
   requires_compatibilities = [
-    "FARGATE"]
-  container_definitions    = <<DEFINITION
+  "FARGATE"]
+  container_definitions = <<DEFINITION
 [
   {
     "logConfiguration": {
@@ -114,6 +116,10 @@ resource "aws_ecs_task_definition" "ga_sb_pc_serverclient" {
       {
         "name": "AUTH_CLIENT_ID",
         "value": "${var.product_catalogue_environment_vars.pc_client_id}"
+      },
+      {
+        "name": "APC_VERSION",
+        "value": "${local.apc_version}"
       }
 
     ],
