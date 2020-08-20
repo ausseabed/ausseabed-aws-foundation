@@ -30,7 +30,7 @@ resource "aws_ecs_service" "ga_sb_pc_service" {
 
 }
 locals {
-  apc_version = regex(".*:([^:]*)", var.client_image)[0]
+  apc_version = (regex(".*:([^:]*)", var.client_image)[0] == "latest" ? formatdate("YYYY-MM-DD'T'hh:mm:ssZZZZ", timestamp()) : regex(".*:([^:]*)", var.client_image)[0])
 }
 # TODO need to specify this for product catalogue
 resource "aws_ecs_task_definition" "ga_sb_pc_serverclient" {
