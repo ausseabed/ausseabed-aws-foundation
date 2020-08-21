@@ -14,12 +14,12 @@ locals {
   )
 
   pcat_client_images = map(
-  "831535125571", "007391679308.dkr.ecr.ap-southeast-2.amazonaws.com/ausseabed-product-catalogue-client:0.0.17",
+  "831535125571", "007391679308.dkr.ecr.ap-southeast-2.amazonaws.com/ausseabed-product-catalogue-client:0.0.18",
   "288871573946", "288871573946.dkr.ecr.ap-southeast-2.amazonaws.com/ausseabed-product-catalogue-client:latest"
   )
 
   pcat_server_images = map(
-  "831535125571", "007391679308.dkr.ecr.ap-southeast-2.amazonaws.com/ausseabed-product-catalogue-server:0.0.17",
+  "831535125571", "007391679308.dkr.ecr.ap-southeast-2.amazonaws.com/ausseabed-product-catalogue-server:0.0.18",
   "288871573946", "288871573946.dkr.ecr.ap-southeast-2.amazonaws.com/ausseabed-product-catalogue-server:latest"
   )
 
