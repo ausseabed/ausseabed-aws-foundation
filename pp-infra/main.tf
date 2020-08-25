@@ -32,6 +32,8 @@ module "compute" {
   mbsystem_image              = "${var.ecr_url}/${var.mbsystem_image}"
   pdal_image                  = "${var.ecr_url}/${var.pdal_image}"
   ecs_task_execution_role_arn = module.ancillary.ecs_task_execution_role_arn
+
+  prod_data_s3_account_canonical_id = var.prod_data_s3_account_canonical_id
 }
 
 

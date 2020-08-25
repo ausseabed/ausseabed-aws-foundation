@@ -13,3 +13,5 @@ pdal_image = "ausseabed-pdal:latest"
 
 
 local_storage_folder="D:\\\\awss3bucket"
+
+prod_data_s3_account_canonical_id="007391679308"
