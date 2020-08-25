@@ -72,6 +72,7 @@
                 "uuid.$": "$.uuid",
                 "bucket.$": "$.bucket",
                 "s3_src_tif.$": "$.s3_src_tif",
+                "s3_dest_shp.$": "$.s3_dest_shp",
                 "s3_dest_tif.$": "$.s3_dest_tif",
                 "s3_hillshade_dest_tif.$": "$.s3_hillshade_dest_tif",
                 "s3_scaling_factor.$": "$.s3_scaling_factor"

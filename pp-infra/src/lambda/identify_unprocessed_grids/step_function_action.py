@@ -46,6 +46,7 @@ class StepFunctionAction():
 
         json_instruction = {'s3_src_tif': self.src_dist_name.s3_src_tif,
                             's3_dest_tif': self.src_dist_name.s3_dest_tif,
+                            's3_dest_shp': self.src_dist_name.s3_dest_shp,
                             's3_hillshade_dest_tif': self.src_dist_name.s3_hillshade_dest_tif,
                             's3_scaling_factor': str(multiplier),
                             'uuid': self.uuid_ref
