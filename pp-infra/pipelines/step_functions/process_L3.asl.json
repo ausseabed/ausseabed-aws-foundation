@@ -109,7 +109,7 @@
                         },
                         {
                           "Name": "S3_DEST_SHP",
-                          "Value.$": "$.s3_dest_tif"
+                          "Value.$": "$.s3_dest_shp"
                         }
                       ]
                     }

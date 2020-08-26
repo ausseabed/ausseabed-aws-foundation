@@ -3,17 +3,19 @@
 
 data "aws_ecs_cluster" "main" {
   cluster_name = "ga_sb_${var.env}_ecs_cluster"
+
 }
+data "aws_caller_identity" "current" {}
 
 resource "aws_ecs_task_definition" "caris-version" {
-  family                   = "caris-version"
-  network_mode             = "awsvpc"
+  family       = "caris-version"
+  network_mode = "awsvpc"
   requires_compatibilities = [
-    "FARGATE"]
-  cpu                      = var.fargate_cpu
-  memory                   = var.fargate_memory
-  execution_role_arn       = var.ecs_task_execution_role_arn
-  task_role_arn            = var.ecs_task_execution_role_arn
+  "FARGATE"]
+  cpu                = var.fargate_cpu
+  memory             = var.fargate_memory
+  execution_role_arn = var.ecs_task_execution_role_arn
+  task_role_arn      = var.ecs_task_execution_role_arn
 
   # 52.62.84.70 is IP address of CARIS manual box in *PROD* account
   container_definitions = <<DEFINITION
@@ -51,14 +53,14 @@ DEFINITION
 
 
 resource "aws_ecs_task_definition" "startstopec2" {
-  family                   = "startstopec2"
-  network_mode             = "awsvpc"
+  family       = "startstopec2"
+  network_mode = "awsvpc"
   requires_compatibilities = [
-    "FARGATE"]
-  cpu                      = var.fargate_cpu
-  memory                   = var.fargate_memory
-  execution_role_arn       = var.ecs_task_execution_role_arn
-  task_role_arn            = var.ecs_task_execution_role_arn
+  "FARGATE"]
+  cpu                = var.fargate_cpu
+  memory             = var.fargate_memory
+  execution_role_arn = var.ecs_task_execution_role_arn
+  task_role_arn      = var.ecs_task_execution_role_arn
 
   container_definitions = <<DEFINITION
 [
@@ -83,14 +85,14 @@ DEFINITION
 }
 
 resource "aws_ecs_task_definition" "gdal" {
-  family                   = "gdal"
-  network_mode             = "awsvpc"
+  family       = "gdal"
+  network_mode = "awsvpc"
   requires_compatibilities = [
-    "FARGATE"]
-  cpu                      = var.fargate_cpu
-  memory                   = var.fargate_memory
-  execution_role_arn       = var.ecs_task_execution_role_arn
-  task_role_arn            = var.ecs_task_execution_role_arn
+  "FARGATE"]
+  cpu                = var.fargate_cpu
+  memory             = var.fargate_memory
+  execution_role_arn = var.ecs_task_execution_role_arn
+  task_role_arn      = var.ecs_task_execution_role_arn
 
   container_definitions = <<DEFINITION
 [
@@ -108,6 +110,12 @@ resource "aws_ecs_task_definition" "gdal" {
     "memory": ${var.fargate_memory},
     "name": "app",
     "networkMode": "awsvpc",
+    "environment": [
+      {
+        "name": "S3_ACCOUNT_CANONICAL_ID",
+        "value": "${var.prod_data_s3_account_canonical_id}"
+      }
+    ],
     "portMappings": []
   }
 ]
@@ -115,14 +123,14 @@ DEFINITION
 }
 
 resource "aws_ecs_task_definition" "mbsystem" {
-  family                   = "mbsystem"
-  network_mode             = "awsvpc"
+  family       = "mbsystem"
+  network_mode = "awsvpc"
   requires_compatibilities = [
-    "FARGATE"]
-  cpu                      = var.fargate_cpu
-  memory                   = var.fargate_memory
-  execution_role_arn       = var.ecs_task_execution_role_arn
-  task_role_arn            = var.ecs_task_execution_role_arn
+  "FARGATE"]
+  cpu                = var.fargate_cpu
+  memory             = var.fargate_memory
+  execution_role_arn = var.ecs_task_execution_role_arn
+  task_role_arn      = var.ecs_task_execution_role_arn
 
   container_definitions = <<DEFINITION
 [
@@ -147,14 +155,14 @@ DEFINITION
 }
 
 resource "aws_ecs_task_definition" "pdal" {
-  family                   = "pdal"
-  network_mode             = "awsvpc"
+  family       = "pdal"
+  network_mode = "awsvpc"
   requires_compatibilities = [
-    "FARGATE"]
-  cpu                      = var.fargate_cpu
-  memory                   = var.fargate_memory
-  execution_role_arn       = var.ecs_task_execution_role_arn
-  task_role_arn            = var.ecs_task_execution_role_arn
+  "FARGATE"]
+  cpu                = var.fargate_cpu
+  memory             = var.fargate_memory
+  execution_role_arn = var.ecs_task_execution_role_arn
+  task_role_arn      = var.ecs_task_execution_role_arn
 
   container_definitions = <<DEFINITION
 [
@@ -177,6 +185,3 @@ resource "aws_ecs_task_definition" "pdal" {
 ]
 DEFINITION
 }
-
-
-data "aws_caller_identity" "current" {}
