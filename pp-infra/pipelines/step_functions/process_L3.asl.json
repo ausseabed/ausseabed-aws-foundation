@@ -110,6 +110,10 @@
                         {
                           "Name": "S3_DEST_SHP",
                           "Value.$": "$.s3_dest_shp"
+                        },
+                        {
+                          "Name": "SCALING_FACTOR",
+                          "Value.$": "$.s3_scaling_factor"
                         }
                       ]
                     }
