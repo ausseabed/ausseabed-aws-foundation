@@ -18,7 +18,16 @@ class SrcDistName():
 
         logging.info(product_l3_src.name)
         logging.info(simple_name)
-        product_name = re.sub(str(self.S3DIFFICULT_CHARS), "_", simple_name)
+        v_datum = product_l3_src.vertical_datum
+        if (v_datum == 'WGS84'):
+            v_datum_code = 'Ellipsoid'
+        elif (v_datum == 'LMSL'):
+            v_datum_code = 'MSL'
+        else:
+            v_datum_code = v_datum
+
+        product_name = re.sub(str(self.S3DIFFICULT_CHARS),
+                              "_", simple_name) + "_" + v_datum_code
 
         self.s3_dest_tif = "s3://" + bucket_name + "/L3/" + \
             identifier + "/" + product_name + "_cog.tif"
