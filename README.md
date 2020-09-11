@@ -7,6 +7,7 @@
   - [Build Production Infrastructure From scratch](#build-production-infrastructure-from-scratch)
   - [Running the processing pipeline](#running-the-processing-pipeline)
   - [Release a new version of data to the portal](#release-a-new-version-of-data-to-the-portal)
+  - [Update the database in staging](#update-the-database-in-staging)
 
 # Introduction
 The ausseabed-aws-foundation repository provides Infrastructure as Code (IaC) for the AusSeabed initiative (see [ausseabed](http://ausseabed.gov.au/)). The initiative aims to make bathymetry products available to the public through cloud-based services and web portals. The code in this repository configures infrastructure such as networking, computing resources and container repositories for housing, processing and distributing bathymetry.
@@ -52,3 +53,14 @@ More detail about the application structures is in their respective repos.
 3. Make public the records in prod-data 
 4. Update the snapshot time on the warehouse (causing the warehouse to restart and load the new records)
 5. Export the portal records from the product catalogue
+
+## Update the database in staging
+There is a helper script that takes a manual snapshot, shares it between production and non-production accounts, 
+runs the terragrunt code to build the snapshot and runs postgres commands to rename the database. It will destroy
+the non-production database, so do a backup if this is an issue. It requires AWS credentials for production to be
+in a profile prod and AWS credentials for non-production to be default. It is worthwhile reading through the script
+before you run it. (First time it also requires .my.auto.tfvars to have a line with "postgres_snapshot_id = " in it).
+```
+cd wh-infra
+./copy-db-staging.sh
+```
