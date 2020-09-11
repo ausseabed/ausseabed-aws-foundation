@@ -7,12 +7,14 @@ resource "aws_lb" "geoserver_load_balancer" {
   name               = "ga-sb-${var.env}-geoserver-lb"
   internal           = false
   load_balancer_type = "application"
-  security_groups    = [
+  security_groups = [
     aws_security_group.warehouse_lb_sb.id
   ]
 
+  idle_timeout = 30 * 60
+
   dynamic "subnet_mapping" {
-    for_each = [for i in range(length(var.networking.web_tier_subnets)): {
+    for_each = [for i in range(length(var.networking.web_tier_subnets)) : {
       subnet_id = var.networking.web_tier_subnets[i]
       //      allocation_id = aws_eip.geoserver_eip[i].id
     }]
@@ -24,6 +26,12 @@ resource "aws_lb" "geoserver_load_balancer" {
 
   tags = {
     Environment = "nonproduction"
+  }
+
+  access_logs {
+    enabled = var.env == "default" ? true : false
+    bucket  = "aussebedtest"
+    prefix  = "nonprod-access-logs"
   }
 }
 
@@ -72,5 +80,5 @@ resource "aws_lb_listener" "geoserver_load_balancer_listener_https" {
     target_group_arn = aws_lb_target_group.geoserver_outside.arn
   }
   depends_on = [
-    aws_acm_certificate.warehouse_cert]
+  aws_acm_certificate.warehouse_cert]
 }

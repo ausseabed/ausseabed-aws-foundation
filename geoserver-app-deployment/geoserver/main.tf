@@ -94,7 +94,7 @@ resource "aws_ecs_service" "geoserver_service" {
   name            = "ga_sb_${var.env}_geoserver_service"
   cluster         = data.aws_ecs_cluster.ga_sb_default_geoserver_cluster.id
   task_definition = aws_ecs_task_definition.geoserver.arn
-  desired_count   = 1
+  desired_count   = var.env == "prod" ? 3 : 1
   launch_type     = "FARGATE"
 
   load_balancer {
@@ -104,10 +104,10 @@ resource "aws_ecs_service" "geoserver_service" {
   }
 
   network_configuration {
-    subnets          = [
-      var.networking.app_tier_subnets[0]]
-    security_groups  = [
-      var.networking.ecs_geoserver_security_group_id]
+    subnets = [
+    var.networking.app_tier_subnets[0]]
+    security_groups = [
+    var.networking.ecs_geoserver_security_group_id]
     assign_public_ip = false
   }
 
