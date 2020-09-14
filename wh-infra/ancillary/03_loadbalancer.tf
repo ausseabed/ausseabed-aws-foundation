@@ -48,8 +48,9 @@ resource "aws_lb_target_group" "geoserver_outside" {
     timeout  = 120
   }
   stickiness {
-    enabled = false
-    type    = "lb_cookie"
+    enabled         = true
+    type            = "lb_cookie"
+    cookie_duration = 86400
   }
   depends_on = [
     aws_lb.geoserver_load_balancer
