@@ -6,7 +6,7 @@ echo "Note, it won't tell you when it is done (check through GUI)."
 
 set -x
 
-SNAPSHOT_NAME="push-to-staging-"`date --iso-8601=seconds | sed "s/[-:]//g" | sed "s/+0000/Z/" | sed "s/Z/z/g" | sed "s/T/t/g`
+SNAPSHOT_NAME="push-to-staging-"`date --iso-8601=seconds | sed "s/[-:]//g" | sed "s/+0000/Z/" | sed "s/Z/z/g" | sed "s/T/t/g"`
 aws rds create-db-snapshot --profile prod --db-snapshot-identifier "$SNAPSHOT_NAME" --db-instance-identifier ga-sb-prod-wh-asbwarehouse-db
 
 # share with non-prod 288871573946
