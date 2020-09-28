@@ -75,10 +75,6 @@ resource "aws_ecs_task_definition" "geoserver" {
       {
         "name": "SNAPSHOT_ISO_DATETIME",
         "value" : "${var.geoserver_environment_vars.snapshot_iso_datetime}" 
-      },
-      {
-        "name": "LD_LIBRARY_PATH",
-        "value": "/usr/lib/jni;/usr/local/openjdk-14/bin/java"
       }
     ],
     "portMappings": [
