@@ -14,7 +14,7 @@ locals {
   )
 
   geoserver_images = map(
-  "831535125571", "007391679308.dkr.ecr.ap-southeast-2.amazonaws.com/ausseabed-geoserver:0.5.0",
+  "831535125571", "007391679308.dkr.ecr.ap-southeast-2.amazonaws.com/ausseabed-geoserver:0.6.0",
   "288871573946", "288871573946.dkr.ecr.ap-southeast-2.amazonaws.com/ausseabed-geoserver:latest"
   )
 
