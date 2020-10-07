@@ -1,0 +1,1 @@
+Pipeline-infra is now in its own Github repository: https://github.com/ausseabed/ausseabed-aws-tf-processing-pipeline
