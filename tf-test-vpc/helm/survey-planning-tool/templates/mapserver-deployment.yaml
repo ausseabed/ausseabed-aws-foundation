@@ -1,0 +1,61 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+    name: mapserver
+spec:
+    selector:
+        matchLabels:
+            app.kubernetes.io/name: spt-mapserver
+            app.kubernetes.io/instance: spt-mapserver
+    replicas: 1
+    strategy:
+        type: RollingUpdate
+    template:
+        metadata:
+            creationTimestamp: null
+            labels:
+                app.kubernetes.io/name: spt-mapserver
+                app.kubernetes.io/instance: spt-mapserver
+        spec:
+            containers:
+                - image: "ausseabed/spt-mapserver:{{ .Values.api.version }}"
+                  imagePullPolicy: Always
+                  name: mapserver
+                  env:
+                      - name: POSTGRES_USER
+                        valueFrom:
+                            secretKeyRef:
+                                name: spt-secrets
+                                key: POSTGRES_USER
+                      - name: POSTGRES_PASSWORD
+                        valueFrom:
+                            secretKeyRef:
+                                name: spt-secrets
+                                key: POSTGRES_PASSWORD
+                      - name: POSTGRES_HOSTNAME
+                        value: {{ .Values.database.host }}
+                      - name: POSTGRES_PORT
+                        value: {{ .Values.database.port | quote }}
+                      - name: POSTGRES_DATABASE
+                        value: {{ .Values.database.name }}
+                      - name: AWS_REGION
+                        value: "ap-southeast-2"
+                  resources: {}
+            restartPolicy: Always
+            imagePullSecrets:
+                - name: regcred
+status: {}
+---
+apiVersion: v1
+kind: Service
+metadata:
+    name: mapserver
+    labels:
+        app.kubernetes.io/name: spt-mapserver
+        app.kubernetes.io/instance: spt-mapserver
+spec:
+    ports:
+        - port: 80
+          targetPort: 80
+    selector:
+        app.kubernetes.io/name: spt-mapserver

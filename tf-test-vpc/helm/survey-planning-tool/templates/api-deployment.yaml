@@ -1,0 +1,86 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+    name: api
+spec:
+    selector:
+        matchLabels:
+            app: spt-api
+    replicas: 1
+    strategy:
+        type: RollingUpdate
+    template:
+        metadata:
+            creationTimestamp: null
+            labels:
+                app: spt-api
+        spec:
+            containers:
+                - image: "ausseabed/spt-api:{{ .Values.api.version }}"
+                  imagePullPolicy: Always
+                  name: api
+                  env:
+                      - name: AUTH_CLIENT_ID
+                        valueFrom:
+                            secretKeyRef:
+                                name: spt-secrets
+                                key: AUTH_CLIENT_ID
+                      - name: AUTH_CLIENT_SECRET
+                        valueFrom:
+                            secretKeyRef:
+                                name: spt-secrets
+                                key: AUTH_CLIENT_SECRET
+                      - name: JWT_TOKEN_KEY_PRIVATE
+                        valueFrom:
+                            secretKeyRef:
+                                name: spt-secrets
+                                key: JWT_TOKEN_KEY_PRIVATE
+                      - name: POSTGRES_USER
+                        valueFrom:
+                            secretKeyRef:
+                                name: spt-secrets
+                                key: POSTGRES_USER
+                      - name: POSTGRES_PASSWORD
+                        valueFrom:
+                            secretKeyRef:
+                                name: spt-secrets
+                                key: POSTGRES_PASSWORD
+                      - name: ANALYTICS_CODE
+                        valueFrom:
+                            secretKeyRef:
+                                name: spt-secrets
+                                key: ANALYTICS_CODE
+                      - name: NODE_ENV
+                        value: "production"
+                      - name: POSTGRES_HOSTNAME
+                        value: {{ .Values.database.host }}
+                      - name: RDS_MODE
+                        value: "true"
+                      - name: POSTGRES_PORT
+                        value: {{ .Values.database.port | quote }}
+                      - name: POSTGRES_DATABASE
+                        value: {{ .Values.database.name }}
+                      - name: AUTH_HOST
+                        value: {{ .Values.cognito.host }}
+                      - name: AWS_REGION
+                        value: "ap-southeast-2"
+                  resources: {}
+            restartPolicy: Always
+            imagePullSecrets:
+                - name: regcred
+status: {}
+---
+apiVersion: v1
+kind: Service
+metadata:
+    name: api
+    labels:
+        app.kubernetes.io/name: spt-api
+        app.kubernetes.io/instance: spt-api
+spec:
+    ports:
+        - port: 3000
+          targetPort: 3000
+    type: NodePort
+    selector:
+        app: "spt-api"

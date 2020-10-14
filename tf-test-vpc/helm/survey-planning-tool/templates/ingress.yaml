@@ -1,0 +1,35 @@
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: spt-ingress
+  annotations:
+    kubernetes.io/ingress.class: alb
+    alb.ingress.kubernetes.io/scheme: internet-facing
+    alb.ingress.kubernetes.io/target-type: ip
+    alb.ingress.kubernetes.io/certificate-arn: "{{ .Values.ingress.certificate_arn }}"
+
+spec:
+{{/*  tls:*/}}
+{{/*  - hosts:*/}}
+{{/*    - planning.ausseabed.gov.au*/}}
+{{/*    - coordination.ausseabed.gov.au*/}}
+{{/*    secretName: spt-tls*/}}
+  rules:
+    - http:
+        paths:
+          - path: /*
+            backend:
+              serviceName: "www"
+              servicePort: 80
+{{/*  - host: planning.ausseabed.gov.au*/}}
+{{/*    http:*/}}
+{{/*      paths:*/}}
+{{/*      - backend:*/}}
+{{/*          serviceName: www*/}}
+{{/*          servicePort: 80*/}}
+{{/*  - host: coordination.ausseabed.gov.au*/}}
+{{/*    http:*/}}
+{{/*      paths:*/}}
+{{/*      - backend:*/}}
+{{/*          serviceName: www*/}}
+{{/*          servicePort: 80*/}}

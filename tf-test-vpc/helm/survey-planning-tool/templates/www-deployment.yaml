@@ -1,0 +1,46 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+    name: www
+spec:
+    selector:
+        matchLabels:
+            app: spt-www
+    replicas: 1
+    strategy:
+        type: RollingUpdate
+    template:
+        metadata:
+            creationTimestamp: null
+            labels:
+                app: spt-www
+        spec:
+            containers:
+                - image: "ausseabed/spt-www:{{ .Values.api.version }}"
+                  imagePullPolicy: Always
+                  name: www
+                  env:
+                      - name: NODE_ENV
+                        value: "production"
+                      - name: AUTH_HOST
+                        value:  {{ .Values.cognito.host }}
+                  resources: {}
+            restartPolicy: Always
+            imagePullSecrets:
+                - name: regcred
+status: {}
+---
+apiVersion: v1
+kind: Service
+metadata:
+    name: www
+    labels:
+        name: service-spt-www
+spec:
+    ports:
+        - port: 80
+          targetPort: 80
+          protocol: TCP
+    type: NodePort
+    selector:
+        app: "spt-www"
