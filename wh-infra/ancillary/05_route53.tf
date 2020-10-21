@@ -1,14 +1,14 @@
 
 locals {
   wh_dns_map = map(
-          "default", "dev.ausseabed.gov.au.",
-          "prod", "ausseabed.gov.au."
+    "default", "dev.ausseabed.gov.au",
+    "prod", "ausseabed.gov.au"
   )
   wh_dns_zone = local.wh_dns_map[var.env]
 }
 
 data "aws_route53_zone" "ausseabed" {
-  name         = local.wh_dns_zone
+  name = local.wh_dns_zone
 }
 
 
@@ -34,10 +34,10 @@ resource "aws_acm_certificate" "warehouse_cert" {
 }
 
 resource "aws_route53_record" "warehouse_cert_validation" {
-  name    = aws_acm_certificate.warehouse_cert.domain_validation_options.0.resource_record_name
-  type    = aws_acm_certificate.warehouse_cert.domain_validation_options.0.resource_record_type
+  name    = tolist(aws_acm_certificate.warehouse_cert.domain_validation_options)[0].resource_record_name
+  type    = tolist(aws_acm_certificate.warehouse_cert.domain_validation_options)[0].resource_record_type
   zone_id = data.aws_route53_zone.ausseabed.id
-  records = [aws_acm_certificate.warehouse_cert.domain_validation_options.0.resource_record_value]
+  records = [tolist(aws_acm_certificate.warehouse_cert.domain_validation_options)[0].resource_record_value]
   ttl     = 60
 }
 
