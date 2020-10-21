@@ -13,20 +13,13 @@ locals {
   "288871573946", "default"
   )
 
-  geoserver_images = map(
-  "831535125571", "007391679308.dkr.ecr.ap-southeast-2.amazonaws.com/ausseabed-geoserver:0.0.7",
-  "288871573946", "288871573946.dkr.ecr.ap-southeast-2.amazonaws.com/ausseabed-geoserver:latest"
-  )
-
   s3_backend_role_arn = local.s3_backend_role_arns[get_aws_account_id()]
   s3_backend_key      = local.s3_backend_keys[get_aws_account_id()]
   env                 = local.envs[get_aws_account_id()]
-  geoserver_image     = local.geoserver_images[get_aws_account_id()]
 }
 
 inputs = {
   env             = local.env
-  geoserver_image = local.geoserver_image
 }
 
 terraform {

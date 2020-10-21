@@ -1,3 +1,9 @@
+locals {
+  env               = (var.env != null) ? var.env : terraform.workspace
+  postgres_password = jsondecode(data.aws_secretsmanager_secret_version.postgres_password.secret_string)
+
+}
+
 data "aws_subnet" "app_tier_subnet_set" {
   for_each = var.networking.app_tier_subnets
   id       = each.value
@@ -17,9 +23,9 @@ resource "aws_security_group" "rds_security_group" {
   }
 
   egress {
-    from_port   = 0
-    to_port     = 0
-    protocol    = "-1"
+    from_port = 0
+    to_port   = 0
+    protocol  = "-1"
     cidr_blocks = [
       "0.0.0.0/0"
     ]
@@ -36,33 +42,41 @@ resource "aws_db_subnet_group" "ga_sb_wh_db_sgrp" {
   }
 }
 
+data "aws_secretsmanager_secret" "postgres_password" {
+  name = "TF_VAR_postgres_admin_password"
+}
+
+data "aws_secretsmanager_secret_version" "postgres_password" {
+  secret_id = data.aws_secretsmanager_secret.postgres_password.id
+}
+
 resource "aws_db_instance" "asbwarehouse" {
-  allocated_storage                   = 20
-  enabled_cloudwatch_logs_exports     = [
+  allocated_storage = 20
+  enabled_cloudwatch_logs_exports = [
     "postgresql",
-    "upgrade"]
+  "upgrade"]
   iam_database_authentication_enabled = false
   storage_type                        = "gp2"
   engine                              = "postgres"
-  engine_version                      = "11.6"
+  engine_version                      = "11.8"
   instance_class                      = var.postgres_server_spec
   name                                = "ga_sb_${var.env}_wh_asbwarehouse_db"
   identifier                          = "ga-sb-${var.env}-wh-asbwarehouse-db"
   username                            = "postgres"
-  password                            = var.postgres_admin_password
+  password                            = local.postgres_password["TF_VAR_postgres_admin_password"]
   port                                = 5432
   snapshot_identifier                 = var.snapshot_identifier
-  vpc_security_group_ids              = [
+  vpc_security_group_ids = [
     aws_security_group.rds_security_group.id
   ]
 
   backup_retention_period = 35
-  backup_window = "12:00-14:00"
+  backup_window           = "12:00-14:00"
 
   db_subnet_group_name = aws_db_subnet_group.ga_sb_wh_db_sgrp.name
   skip_final_snapshot  = true
   // XXX So that we can easily destroy the database in terraform while we are developing
-  publicly_accessible  = true
+  publicly_accessible = true
 
   lifecycle {
     #this prevents Terraform to destroy RDS instance when snapshot identifier is not provided.

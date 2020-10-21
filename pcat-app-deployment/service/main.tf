@@ -6,6 +6,17 @@ data "aws_iam_role" "ecs_task_execution_role_svc" {
   name = "ga_sb_${var.env}_ecs_task_execution_role_svc"
 }
 
+
+data "aws_secretsmanager_secret" "postgres_password" {
+  name = "TF_VAR_postgres_admin_password"
+}
+
+data "aws_secretsmanager_secret_version" "postgres_password" {
+  secret_id = data.aws_secretsmanager_secret.postgres_password.id
+}
+
+
+
 resource "aws_ecs_service" "ga_sb_pc_service" {
   name                              = "ga_sb_${var.env}_pc_service"
   cluster                           = data.aws_ecs_cluster.ga_sb_default_geoserver_cluster.id
@@ -57,6 +68,11 @@ resource "aws_ecs_task_definition" "ga_sb_pc_serverclient" {
     "image": "${var.server_image}",
     "name": "ga_sb_${var.env}_product_catalogue_server_task",
     "networkMode": "awsvpc",
+    "secrets": [
+      {
+        "name": "POSTGRES_PASSWORD",
+        "valueFrom": "${data.aws_secretsmanager_secret_version.postgres_password.secret_id}"
+      }],
     "environment": [
       {
         "name": "AUTH_HOST",
@@ -65,10 +81,6 @@ resource "aws_ecs_task_definition" "ga_sb_pc_serverclient" {
       {
         "name": "AUTH_CLIENT_ID",
         "value": "${var.product_catalogue_environment_vars.pc_client_id}"
-      },
-      {
-        "name": "POSTGRES_PASSWORD",
-        "value": "${var.product_catalogue_environment_vars.postgres_password}"
       },
       {
         "name": "POSTGRES_PORT",
@@ -81,7 +93,8 @@ resource "aws_ecs_task_definition" "ga_sb_pc_serverclient" {
       {
         "name": "POSTGRES_DATABASE",
         "value": "${var.product_catalogue_environment_vars.postgres_database}"
-      },{
+      },
+      {
         "name": "POSTGRES_HOSTNAME",
         "value": "${var.product_catalogue_environment_vars.postgres_hostname}"
       }
@@ -110,18 +123,17 @@ resource "aws_ecs_task_definition" "ga_sb_pc_serverclient" {
     "networkMode": "awsvpc",
     "environment": [
       {
+        "name": "APC_VERSION",
+        "value": "${local.apc_version}"
+      },
+      {
         "name": "AUTH_HOST",
         "value": "${var.product_catalogue_environment_vars.pc_auth_host}"
       },
       {
         "name": "AUTH_CLIENT_ID",
         "value": "${var.product_catalogue_environment_vars.pc_client_id}"
-      },
-      {
-        "name": "APC_VERSION",
-        "value": "${local.apc_version}"
       }
-
     ],
     "portMappings": [
       {
