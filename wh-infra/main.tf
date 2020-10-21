@@ -1,6 +1,6 @@
 locals {
-  env                   = (var.env != null) ? var.env : terraform.workspace
-  secret                = jsondecode(data.aws_secretsmanager_secret_version.wh-infra-secrets.secret_string)
+  env    = (var.env != null) ? var.env : terraform.workspace
+  secret = jsondecode(data.aws_secretsmanager_secret_version.wh-infra-secrets.secret_string)
   #TODO create .prod.aussueabed zone for internal communications
   product_catalogue_url = (var.env == "default") ? "https://catalogue.dev.ausseabed.gov.au/rest" : "https://catalogue.ausseabed.gov.au/rest"
 }
@@ -36,17 +36,17 @@ module "networking" {
 module "ancillary" {
   source     = "./ancillary"
   env        = local.env
+  aws_region = var.aws_region
   networking = module.networking
 }
 
 module "postgres" {
-  source                  = "./postgres"
-  env                     = local.env
-  aws_region              = var.aws_region
-  postgres_admin_password = var.postgres_admin_password
-  postgres_server_spec    = var.postgres_server_spec
-  snapshot_identifier     = var.postgres_snapshot_id
-  networking              = module.networking
+  source               = "./postgres"
+  env                  = local.env
+  aws_region           = var.aws_region
+  postgres_server_spec = var.postgres_server_spec
+  snapshot_identifier  = var.postgres_snapshot_id
+  networking           = module.networking
 
 }
 

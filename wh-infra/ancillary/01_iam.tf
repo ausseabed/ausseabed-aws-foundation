@@ -1,3 +1,11 @@
+
+data "aws_caller_identity" "current" {}
+
+locals {
+  account_id = data.aws_caller_identity.current.account_id
+}
+
+
 resource "aws_iam_role" "ecs_task_execution_role_svc" {
   name = "ga_sb_${var.env}_ecs_task_execution_role_svc"
 
@@ -59,7 +67,11 @@ resource "aws_iam_role_policy" "ecs_task_execution_policy" {
                 "secretsmanager:DescribeSecret",
                 "secretsmanager:ListSecretVersionIds"
             ],
-            "Resource": "arn:aws:secretsmanager:ap-southeast-2:288871573946:secret:caris_batch_secret-OMZKQN"
+            "Resource": 
+            [
+              "arn:aws:secretsmanager:ap-southeast-2:288871573946:secret:caris_batch_secret-OMZKQN",
+              "arn:aws:secretsmanager:${var.aws_region}:${local.account_id}:secret:TF_VAR_postgres_admin_password*"
+            ]
         },
         {
             "Sid": "VisualEditor1",
