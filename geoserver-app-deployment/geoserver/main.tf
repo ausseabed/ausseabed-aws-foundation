@@ -72,16 +72,16 @@ resource "aws_ecs_task_definition" "geoserver" {
       {
         "name": "SNAPSHOT_ISO_DATETIME",
         "value" : "${var.geoserver_environment_vars.snapshot_iso_datetime}" 
-      },
-      {
-        "name": "GEOSERVER_ADMIN_PASSWORD",
-        "value": "${jsondecode(data.aws_secretsmanager_secret_version.geoserver_credentials.secret_string)["TF_VAR_geoserver_admin_password"]}"
       }
     ],
     "secrets": [
       {
         "name": "PRODUCT_CATALOGUE_CREDS",
         "valueFrom": "${data.aws_secretsmanager_secret_version.product_catalogue_credentials.secret_id}"
+      },
+      {
+        "name": "GEOSERVER_ADMIN_PASSWORD",
+        "valueFrom": "${data.aws_secretsmanager_secret_version.geoserver_credentials.secret_id}"
       }
       ],
     "portMappings": [
