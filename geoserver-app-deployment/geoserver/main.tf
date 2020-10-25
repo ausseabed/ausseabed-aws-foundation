@@ -12,16 +12,8 @@ data "aws_secretsmanager_secret" "product_catalogue_credentials" {
   name = "wh-infra.auto.tfvars"
 }
 
-data "aws_secretsmanager_secret_version" "product_catalogue_credentials" {
-  secret_id = data.aws_secretsmanager_secret.product_catalogue_credentials.id
-}
-
 data "aws_secretsmanager_secret" "geoserver_credentials" {
   name = "geoserver_admin_password"
-}
-
-data "aws_secretsmanager_secret_version" "geoserver_credentials" {
-  secret_id = data.aws_secretsmanager_secret.geoserver_credentials.id
 }
 
 
@@ -77,11 +69,11 @@ resource "aws_ecs_task_definition" "geoserver" {
     "secrets": [
       {
         "name": "PRODUCT_CATALOGUE_CREDS",
-        "valueFrom": "${data.aws_secretsmanager_secret_version.product_catalogue_credentials.secret_id}"
+        "valueFrom": "${data.aws_secretsmanager_secret.product_catalogue_credentials.id}"
       },
       {
         "name": "GEOSERVER_ADMIN_PASSWORD",
-        "valueFrom": "${data.aws_secretsmanager_secret_version.geoserver_credentials.secret_id}"
+        "valueFrom": "${data.aws_secretsmanager_secret.geoserver_credentials.id}"
       }
       ],
     "portMappings": [
