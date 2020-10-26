@@ -18,5 +18,3 @@ server_memory = 16384
 geoserver_initial_memory = "4G"
 geoserver_maximum_memory = "15G"
 
-postgres_server_spec = "db.t2.micro"
-

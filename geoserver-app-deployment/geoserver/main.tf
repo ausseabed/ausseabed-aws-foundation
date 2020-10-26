@@ -1,4 +1,9 @@
 
+data "aws_caller_identity" "current" {}
+
+locals {
+  account_id = data.aws_caller_identity.current.account_id
+}
 
 data "aws_ecs_cluster" "ga_sb_default_geoserver_cluster" {
   cluster_name = "ga_sb_${var.env}_geoserver_cluster"
@@ -6,14 +11,6 @@ data "aws_ecs_cluster" "ga_sb_default_geoserver_cluster" {
 
 data "aws_iam_role" "ecs_task_execution_role_svc" {
   name = "ga_sb_${var.env}_ecs_task_execution_role_svc"
-}
-
-data "aws_secretsmanager_secret" "product_catalogue_credentials" {
-  name = "wh-infra.auto.tfvars"
-}
-
-data "aws_secretsmanager_secret" "geoserver_credentials" {
-  name = "geoserver_admin_password"
 }
 
 
@@ -69,11 +66,11 @@ resource "aws_ecs_task_definition" "geoserver" {
     "secrets": [
       {
         "name": "PRODUCT_CATALOGUE_CREDS",
-        "valueFrom": "${data.aws_secretsmanager_secret.product_catalogue_credentials.id}"
+        "valueFrom": "arn:aws:secretsmanager:${var.aws_region}:${local.account_id}:secret:wh-infra.auto.tfvars"
       },
       {
         "name": "GEOSERVER_ADMIN_PASSWORD",
-        "valueFrom": "${data.aws_secretsmanager_secret.geoserver_credentials.id}"
+        "valueFrom": "arn:aws:secretsmanager:${var.aws_region}:${local.account_id}:secret:geoserver_admin_password"
       }
       ],
     "portMappings": [
