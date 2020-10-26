@@ -69,7 +69,7 @@ resource "aws_iam_role_policy" "ecs_task_execution_policy" {
             ],
             "Resource": 
             [
-              "arn:aws:secretsmanager:ap-southeast-2:288871573946:secret:caris_batch_secret-OMZKQN",
+              "arn:aws:secretsmanager:${var.aws_region}:${local.account_id}:secret:caris_batch_secret*",
               "arn:aws:secretsmanager:${var.aws_region}:${local.account_id}:secret:TF_VAR_postgres_admin_password*",
               "arn:aws:secretsmanager:${var.aws_region}:${local.account_id}:secret:wh-infra.auto.tfvars*",
               "arn:aws:secretsmanager:${var.aws_region}:${local.account_id}:secret:geoserver_admin_password*"

@@ -20,6 +20,7 @@ module "geoserver" {
   geoserver_image = var.geoserver_image
   server_cpu      = var.server_cpu
   server_memory   = var.server_memory
+  aws_region      = var.aws_region
   geoserver_environment_vars = {
     geoserver_initial_memory = var.geoserver_initial_memory
     geoserver_maximum_memory = var.geoserver_maximum_memory

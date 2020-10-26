@@ -2,6 +2,7 @@ variable "env" {}
 
 #------compute/variables.tf
 
+variable "aws_region" {}
 
 variable "geoserver_environment_vars" {
   type = object({
