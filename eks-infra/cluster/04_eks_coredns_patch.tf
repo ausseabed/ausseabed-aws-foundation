@@ -16,14 +16,6 @@ data "aws_eks_cluster_auth" "ga" {
   name = data.aws_eks_cluster.ga.name
 }
 
-//provider "kubernetes" {
-//  alias                  = "eks"
-//  host                   = data.aws_eks_cluster.ga.endpoint
-//  cluster_ca_certificate = base64decode(data.aws_eks_cluster.ga.certificate_authority[0].data)
-//  token                  = data.aws_eks_cluster_auth.ga.token
-//  load_config_file       = false
-//}
-
 
 data "template_file" "kubeconfig" {
   depends_on = [

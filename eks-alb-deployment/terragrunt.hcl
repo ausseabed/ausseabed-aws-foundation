@@ -6,7 +6,7 @@ locals {
 
   s3_backend_keys      = map(
   "831535125571", "env:/prod/terraform/eks-alb-deployment/terraform-aws-foundation-eks-alb-deployment.tfstate",
-  "288871573946", "terraform/eks-alb-deployment/terraform-aws-foundation-eks-alb-deployment.tfstate"
+  "288871573946", "terraform/eks-postinstall/terraform-aws-foundation-eks-postinstall.tfstate"
   )
 
   envs = map(
