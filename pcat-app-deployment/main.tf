@@ -1,8 +1,6 @@
 locals {
-  env               = (var.env != null) ? var.env : terraform.workspace
-  secret            = jsondecode(data.aws_secretsmanager_secret_version.wh-infra-secrets.secret_string)
-  postgres_password = jsondecode(data.aws_secretsmanager_secret_version.postgres_password.secret_string)
-
+  env    = (var.env != null) ? var.env : terraform.workspace
+  secret = jsondecode(data.aws_secretsmanager_secret_version.wh-infra-secrets.secret_string)
 }
 
 provider "aws" {
