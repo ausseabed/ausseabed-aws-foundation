@@ -3,6 +3,13 @@ data "aws_region" "current" {}
 locals {
   # Your AWS EKS Cluster ID goes here.
   k8s_cluster_name = aws_eks_cluster.ga_sb_eks_cluster.name
+  cicd_service_account_map    = map(
+  "default", "circleci",
+  "prod", "ga_aws_prd_sb_svc_cicd"
+  )
+
+  cicd_service_account=local.cicd_service_account_map[var.env]
+
 }
 
 data "aws_eks_cluster" "ga" {
@@ -16,6 +23,35 @@ data "aws_eks_cluster_auth" "ga" {
   name = data.aws_eks_cluster.ga.name
 }
 
+data "aws_iam_user" "cicd_service_account" {
+  user_name = local.cicd_service_account
+}
+
+data "template_file" "aws_auth" {
+  template = <<EOF
+apiVersion: v1
+data:
+  mapRoles: |
+    - groups:
+      - system:bootstrappers
+      - system:nodes
+      - system:node-proxier
+      rolearn: ${data.aws_iam_role.ga_sb_iam_eks_fargate_profile.arn}
+      username: system:node:{{SessionName}}
+  mapUsers: |
+    - groups:
+      - system:masters
+      userarn: ${data.aws_iam_user.cicd_service_account.arn}
+      username: circleci
+kind: ConfigMap
+metadata:
+  creationTimestamp: "2020-08-03T07:44:09Z"
+  name: aws-auth
+  namespace: kube-system
+  selfLink: /api/v1/namespaces/kube-system/configmaps/aws-auth
+
+EOF
+}
 
 data "template_file" "kubeconfig" {
   depends_on = [
@@ -68,6 +104,32 @@ resource "null_resource" "coredns_patch" {
   kubectl --kubeconfig=<(echo '${data.template_file.kubeconfig.rendered}') \
    rollout restart deployments/coredns \
    --namespace kube-system
+
+EOF
+  }
+}
+
+
+resource "null_resource" "configmap_update" {
+  depends_on = [
+    aws_eks_fargate_profile.ga_sb_eks_fargate_profile
+  ]
+
+  triggers = {
+    fargate_profile = aws_eks_fargate_profile.ga_sb_eks_fargate_profile.arn
+  }
+
+  provisioner "local-exec" {
+    interpreter = [
+      "/bin/bash",
+      "-c"
+    ]
+    command     = <<EOF
+
+  kubectl --kubeconfig=<(echo '${data.template_file.kubeconfig.rendered}') \
+   apply -f <(echo '${data.template_file.aws_auth.rendered}') \
+   --namespace kube-system
+
 EOF
   }
 }

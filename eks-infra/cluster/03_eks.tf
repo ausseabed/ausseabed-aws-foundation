@@ -10,6 +10,7 @@ resource "aws_eks_cluster" "ga_sb_eks_cluster" {
   name     = "ga_sb_${var.env}_eks_cluster"
   role_arn = data.aws_iam_role.ga_sb_eks_role.arn
 
+  version = "1.18"
   enabled_cluster_log_types = ["api", "authenticator", "controllerManager", "scheduler"]
   vpc_config {
     subnet_ids = concat(var.networking.app_tier_subnets, var.networking.web_tier_subnets)
@@ -29,8 +30,8 @@ resource "aws_iam_openid_connect_provider" "example" {
 }
 
 resource "aws_eks_fargate_profile" "ga_sb_eks_fargate_profile" {
-  cluster_name           = aws_eks_cluster.ga_sb_eks_cluster.name
   fargate_profile_name   = "ga_sb_eks_${var.env}_fargate_profile"
+  cluster_name           = aws_eks_cluster.ga_sb_eks_cluster.name
   pod_execution_role_arn = data.aws_iam_role.ga_sb_iam_eks_fargate_profile.arn
   subnet_ids             = var.networking.app_tier_subnets
 
