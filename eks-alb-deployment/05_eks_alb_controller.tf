@@ -7,9 +7,6 @@ locals {
 
 data "aws_eks_cluster" "ga" {
   name       = local.k8s_cluster_name
-//  depends_on = [
-//    aws_eks_cluster.ga_sb_eks_cluster,
-//    aws_eks_fargate_profile.ga_sb_eks_fargate_profile]
 }
 
 data "aws_eks_cluster_auth" "ga" {
