@@ -1,8 +1,6 @@
 #!/bin/bash
 
 echo "The RDS takes about 15 minutes to save. Don't interrupt while it does this."
-echo "Press q when it is done."
-echo "Note, it won't tell you when it is done (check through GUI)."
 
 # set -x
 
