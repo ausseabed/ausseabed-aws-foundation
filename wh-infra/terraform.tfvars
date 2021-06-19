@@ -6,5 +6,5 @@ public_cidrs = [
 ]
 accessip = "0.0.0.0/0"
 
-postgres_server_spec = "db.t2.micro"
+postgres_server_spec = "db.t2.medium"
 
