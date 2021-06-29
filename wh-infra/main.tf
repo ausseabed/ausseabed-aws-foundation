@@ -51,3 +51,11 @@ module "s3" {
   source = "./s3"
   env    = local.env
 }
+
+module "cloudfront" {
+  source                = "./cloudfront"
+  env                   = local.env
+  mh370_cache_bucket    = module.s3.mh370_cache_bucket
+  mh370_storymap_bucket = module.s3.mh370_storymap_bucket
+  wh_dns_zone           = module.ancillary.wh_dns_zone
+}

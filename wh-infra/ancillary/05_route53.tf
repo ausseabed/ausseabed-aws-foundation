@@ -1,4 +1,3 @@
-
 locals {
   wh_dns_map = map(
     "default", "dev.ausseabed.gov.au",
@@ -10,7 +9,6 @@ locals {
 data "aws_route53_zone" "ausseabed" {
   name = local.wh_dns_zone
 }
-
 
 resource "aws_route53_record" "warehouse_dns" {
   zone_id = data.aws_route53_zone.ausseabed.id
