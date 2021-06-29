@@ -1,6 +1,10 @@
 resource "aws_eip" "geoserver_eip" {
   count = length(var.networking.web_tier_subnets)
   vpc   = true
+
+  lifecycle {
+    ignore_changes = [tags]
+  }
 }
 
 resource "aws_lb" "geoserver_load_balancer" {

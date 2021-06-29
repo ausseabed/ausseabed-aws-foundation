@@ -52,9 +52,7 @@ data "aws_secretsmanager_secret_version" "postgres_password" {
 
 resource "aws_db_instance" "asbwarehouse" {
   allocated_storage                   = 20
-  enabled_cloudwatch_logs_exports     = [
-    "postgresql",
-    "upgrade"]
+  enabled_cloudwatch_logs_exports     = ["postgresql", "upgrade"]
   iam_database_authentication_enabled = false
   storage_type                        = "gp2"
   engine                              = "postgres"
@@ -66,6 +64,8 @@ resource "aws_db_instance" "asbwarehouse" {
   password                            = local.postgres_password["TF_VAR_postgres_admin_password"]
   port                                = 5432
   snapshot_identifier                 = var.snapshot_identifier
+  db_subnet_group_name                = aws_db_subnet_group.ga_sb_wh_db_sgrp.name
+
   vpc_security_group_ids              = [
     aws_security_group.rds_security_group.id
   ]
@@ -73,11 +73,11 @@ resource "aws_db_instance" "asbwarehouse" {
   backup_retention_period = 35
   backup_window           = "12:00-14:00"
 
-  db_subnet_group_name = aws_db_subnet_group.ga_sb_wh_db_sgrp.name
-  skip_final_snapshot  = true
+  performance_insights_enabled = true
+  skip_final_snapshot          = true
   // XXX So that we can easily destroy the database in terraform while we are developing
-  publicly_accessible  = true
-  apply_immediately    = true
+  publicly_accessible          = true
+  apply_immediately            = true
 
   lifecycle {
     #this prevents Terraform to destroy RDS instance when snapshot identifier is not provided.
