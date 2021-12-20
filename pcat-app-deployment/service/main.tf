@@ -31,14 +31,21 @@ resource "aws_ecs_service" "ga_sb_pc_service" {
     container_port   = 3001
   }
 
-  network_configuration {
-    subnets = [
-    var.networking.app_tier_subnets[0]]
-    security_groups = [
-    var.networking.ecs_pc_security_group_id]
-    assign_public_ip = false
+  load_balancer {
+    target_group_arn = var.networking.aws_ecs_lb_target_group_mh370api_arn
+    container_name   = "ga_sb_${var.env}_product_catalogue_client_task"
+    container_port   = 3002
   }
 
+  network_configuration {
+    subnets = [
+      var.networking.app_tier_subnets[0]
+    ]
+    security_groups = [
+      var.networking.ecs_pc_security_group_id
+    ]
+    assign_public_ip = false
+  }
 }
 locals {
   apc_version = (regex(".*:([^:]*)", var.client_image)[0] == "latest" ? formatdate("YYYY-MM-DD'T'hh:mm:ssZZZZ", timestamp()) : regex(".*:([^:]*)", var.client_image)[0])
@@ -104,11 +111,16 @@ resource "aws_ecs_task_definition" "ga_sb_pc_serverclient" {
         "containerPort": 3000,
         "hostPort": 3000,
         "protocol": "tcp"
+      },
+      {
+        "containerPort": 3002,
+        "hostPort": 3002,
+        "protocol": "tcp"
       }
     ],
     "volumesFrom": []
   },
-    {
+  {
     "logConfiguration": {
       "logDriver": "awslogs",
       "secretOptions": null,
@@ -146,5 +158,3 @@ resource "aws_ecs_task_definition" "ga_sb_pc_serverclient" {
 ]
 DEFINITION
 }
-
-
