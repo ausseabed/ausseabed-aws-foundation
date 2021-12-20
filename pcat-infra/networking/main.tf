@@ -49,8 +49,8 @@ data "aws_subnet_ids" "db_tier_subnets" {
 
 locals {
   dns_map = map(
-  "default", "dev.ausseabed.gov.au.",
-  "prod", "ausseabed.gov.au."
+    "default", "dev.ausseabed.gov.au.",
+    "prod", "ausseabed.gov.au."
   )
   dns_zone = local.dns_map[var.env]
 }
@@ -85,15 +85,34 @@ resource "aws_route53_record" "ga_sb_pc_route53" {
   }
 }
 
+resource "aws_route53_record" "ga_sb_mh370api_route53" {
+  name    = "mh370-api.${local.dns_zone}"
+  zone_id = data.aws_route53_zone.zone.id
+  type    = "A"
+  alias {
+    name                   = aws_lb.ga_sb_pc_load_balancer.dns_name
+    zone_id                = aws_lb.ga_sb_pc_load_balancer.zone_id
+    evaluate_target_health = false
+  }
+}
+
 resource "aws_security_group" "ga_sb_env_pc_public_sg" {
   name        = "ga_sb_${var.env}_pc_public_sg"
   description = "Used for access to the public instances"
   vpc_id      = data.aws_vpc.ga_sb_vpc.id
 
-  #HTTP
+  # Product Catalogue client
   ingress {
     from_port   = 3001
     to_port     = 3001
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  # MH370 API
+  ingress {
+    from_port   = 3002
+    to_port     = 3002
     protocol    = "tcp"
     cidr_blocks = ["0.0.0.0/0"]
   }
@@ -120,6 +139,17 @@ resource "aws_acm_certificate_validation" "cert" {
   validation_record_fqdns = [aws_route53_record.cert_validation.fqdn]
 }
 
+resource "aws_lb" "ga_sb_pc_load_balancer" {
+  name               = "ga-sb-${var.env}-pc-load-balancer"
+  internal           = false
+  load_balancer_type = "application"
+  subnets            = data.aws_subnet_ids.web_tier_subnets.ids
+  security_groups    = [aws_security_group.ga_sb_env_pc_public_sg.id]
+  tags = {
+    Environment = "nonproduction"
+  }
+}
+
 resource "aws_lb_listener" "ga_sb_pc_load_balancer_listener" {
   load_balancer_arn = aws_lb.ga_sb_pc_load_balancer.arn
   port              = "443"
@@ -132,17 +162,30 @@ resource "aws_lb_listener" "ga_sb_pc_load_balancer_listener" {
   }
 }
 
+resource "aws_lb_listener_rule" "ga_sb_mh370api_load_balancer_listener" {
+  listener_arn = aws_lb_listener.ga_sb_pc_load_balancer_listener.arn
 
-resource "aws_lb" "ga_sb_pc_load_balancer" {
-  name               = "ga-sb-${var.env}-pc-load-balancer"
-  internal           = false
-  load_balancer_type = "application"
-  subnets            = data.aws_subnet_ids.web_tier_subnets.ids
-  security_groups    = [aws_security_group.ga_sb_env_pc_public_sg.id]
-  tags = {
-    Environment = "nonproduction"
+  action {
+    type = "forward"
+    forward {
+      target_group {
+        arn    = aws_lb_target_group.ga_sb_mh370api_load_balancer_outside.arn
+      }
+
+      stickiness {
+        enabled  = true
+        duration = 600
+      }
+    }
+  }
+
+  condition {
+    host_header {
+      values = ["mh370-api.${local.dns_zone}"]
+    }
   }
 }
+
 resource "aws_lb_target_group" "ga_sb_pc_load_balancer_outside" {
   name        = "ga-sb-${var.env}-pc-lb-outside"
   port        = 80
@@ -158,3 +201,17 @@ resource "aws_lb_target_group" "ga_sb_pc_load_balancer_outside" {
   }
 }
 
+resource "aws_lb_target_group" "ga_sb_mh370api_load_balancer_outside" {
+  name        = "ga-sb-${var.env}-mh370api-lb-outside"
+  port        = 80
+  protocol    = "HTTP"
+  vpc_id      = data.aws_vpc.ga_sb_vpc.id
+  target_type = "ip"
+  health_check {
+    path = "/#/health"
+  }
+  stickiness {
+    enabled = false
+    type    = "lb_cookie"
+  }
+}

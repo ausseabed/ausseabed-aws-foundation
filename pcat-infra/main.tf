@@ -2,7 +2,6 @@ locals {
   env    = (var.env != null) ? var.env : terraform.workspace
   secret = jsondecode(data.aws_secretsmanager_secret_version.wh-infra-secrets.secret_string)
   postgres_password = jsondecode(data.aws_secretsmanager_secret_version.postgres_password.secret_string)
-
 }
 
 provider "aws" {
@@ -25,8 +24,6 @@ data "aws_secretsmanager_secret" "postgres_password" {
 data "aws_secretsmanager_secret_version" "postgres_password" {
   secret_id = data.aws_secretsmanager_secret.postgres_password.id
 }
-
-
 
 data "aws_db_instance" "asbwarehouse" {
   db_instance_identifier = "ga-sb-${local.env}-wh-asbwarehouse-db"
