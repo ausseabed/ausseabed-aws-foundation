@@ -101,10 +101,18 @@ resource "aws_security_group" "ga_sb_env_pc_public_sg" {
   description = "Used for access to the public instances"
   vpc_id      = data.aws_vpc.ga_sb_vpc.id
 
-  #HTTP
+  # Product Catalogue client
   ingress {
     from_port   = 3001
     to_port     = 3001
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  # MH370 API
+  ingress {
+    from_port   = 3002
+    to_port     = 3002
     protocol    = "tcp"
     cidr_blocks = ["0.0.0.0/0"]
   }
