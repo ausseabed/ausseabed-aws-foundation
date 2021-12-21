@@ -33,7 +33,7 @@ resource "aws_ecs_service" "ga_sb_pc_service" {
 
   load_balancer {
     target_group_arn = var.networking.aws_ecs_lb_target_group_mh370api_arn
-    container_name   = "ga_sb_${var.env}_product_catalogue_client_task"
+    container_name   = "ga_sb_${var.env}_product_catalogue_server_task"
     container_port   = 3002
   }
 
