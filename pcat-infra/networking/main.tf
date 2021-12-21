@@ -52,11 +52,11 @@ locals {
     "default", "dev.ausseabed.gov.au.",
     "prod", "ausseabed.gov.au."
   )
-  dns_zone = local.dns_map[var.env],
+  dns_zone = local.dns_map[var.env]
   domain_map = map(
     "default", "dev.ausseabed.gov.au",
     "prod", "ausseabed.gov.au"
-  ),
+  )
   env_domain = local.domain_map[var.env]
 }
 
