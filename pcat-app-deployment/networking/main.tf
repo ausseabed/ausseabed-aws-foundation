@@ -26,11 +26,13 @@ data "aws_subnet_ids" "app_tier_subnets" {
   }
 }
 
+data "aws_lb_target_group" "ga_sb_mh370api_load_balancer_outside" {
+  name        = "ga-sb-${var.env}-mh370api-lb-outside"
+}
 
 data "aws_lb_target_group" "ga_sb_pc_load_balancer_outside" {
   name        = "ga-sb-${var.env}-pc-lb-outside"
 }
-
 
 data "aws_security_group" "ga_sb_env_pc_public_sg" {
   name        = "ga_sb_${var.env}_pc_public_sg"
