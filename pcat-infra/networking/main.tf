@@ -91,7 +91,7 @@ resource "aws_route53_record" "ga_sb_pc_route53" {
 }
 
 resource "aws_route53_record" "ga_sb_mh370api_route53" {
-  name    = "mh370-api.${local.dns_zone}"
+  name    = "mh370-api.${local.env_domain}"
   zone_id = data.aws_route53_zone.zone.id
   type    = "A"
   alias {
