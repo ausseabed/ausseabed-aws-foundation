@@ -172,16 +172,7 @@ resource "aws_lb_listener_rule" "ga_sb_mh370api_load_balancer_listener" {
 
   action {
     type = "forward"
-    forward {
-      target_group {
-        arn    = aws_lb_target_group.ga_sb_mh370api_load_balancer_target_group.arn
-      }
-
-      stickiness {
-        enabled  = true
-        duration = 600
-      }
-    }
+    target_group_arn = aws_lb_target_group.ga_sb_mh370api_load_balancer_target_group.arn
   }
 
   condition {
