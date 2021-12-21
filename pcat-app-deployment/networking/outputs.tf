@@ -14,7 +14,7 @@ output "vpc_arn" {
 }
 
 output "aws_ecs_lb_target_group_mh370api_arn" {
-  value = data.aws_lb_target_group.ga_sb_mh370api_load_balancer_outside.arn
+  value = data.aws_lb_target_group.ga_sb_mh370api_load_balancer_target_group.arn
 }
 
 output "aws_ecs_lb_target_group_product_catalogue_arn" {

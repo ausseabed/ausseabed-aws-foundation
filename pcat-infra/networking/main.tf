@@ -169,7 +169,7 @@ resource "aws_lb_listener_rule" "ga_sb_mh370api_load_balancer_listener" {
     type = "forward"
     forward {
       target_group {
-        arn    = aws_lb_target_group.ga_sb_mh370api_load_balancer_outside.arn
+        arn    = aws_lb_target_group.ga_sb_mh370api_load_balancer_target_group.arn
       }
 
       stickiness {
@@ -201,8 +201,8 @@ resource "aws_lb_target_group" "ga_sb_pc_load_balancer_outside" {
   }
 }
 
-resource "aws_lb_target_group" "ga_sb_mh370api_load_balancer_outside" {
-  name        = "ga-sb-${var.env}-mh370api-lb-outside"
+resource "aws_lb_target_group" "ga_sb_mh370api_load_balancer_target_group" {
+  name        = "ga-sb-${var.env}-mh370api-lb-tg"
   port        = 80
   protocol    = "HTTP"
   vpc_id      = data.aws_vpc.ga_sb_vpc.id
