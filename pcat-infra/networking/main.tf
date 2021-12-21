@@ -52,7 +52,12 @@ locals {
     "default", "dev.ausseabed.gov.au.",
     "prod", "ausseabed.gov.au."
   )
-  dns_zone = local.dns_map[var.env]
+  dns_zone = local.dns_map[var.env],
+  domain_map = map(
+    "default", "dev.ausseabed.gov.au",
+    "prod", "ausseabed.gov.au"
+  ),
+  env_domain = local.domain_map[var.env]
 }
 
 
@@ -181,7 +186,7 @@ resource "aws_lb_listener_rule" "ga_sb_mh370api_load_balancer_listener" {
 
   condition {
     host_header {
-      values = ["mh370-api.${local.dns_zone}"]
+      values = ["mh370-api.${local.env_domain}"]
     }
   }
 }
