@@ -182,6 +182,10 @@ resource "aws_lb_listener" "ga_sb_pc_load_balancer_listener" {
 }
 
 resource "aws_lb_listener_certificate" "ga_sb_mh370api_load_balancer_certificate" {
+  depends_on = [
+    aws_acm_certificate_validation.cert_mh370api
+  ]
+
   listener_arn    = aws_lb_listener.ga_sb_pc_load_balancer_listener.arn
   certificate_arn = aws_acm_certificate.cert_mh370api.arn
 }
