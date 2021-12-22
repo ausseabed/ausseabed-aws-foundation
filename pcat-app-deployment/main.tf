@@ -40,8 +40,6 @@ module "service" {
     postgres_user     = data.aws_db_instance.asbwarehouse.master_username,
     postgres_database = "ga_sb_${local.env}_wh_asbwarehouse_db",
     postgres_hostname = data.aws_db_instance.asbwarehouse.address
-
   }
   env = local.env
 }
-

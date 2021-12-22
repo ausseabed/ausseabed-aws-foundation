@@ -5,7 +5,6 @@ locals {
   account_id = data.aws_caller_identity.current.account_id
 }
 
-
 resource "aws_iam_role" "ecs_task_execution_role_svc" {
   name = "ga_sb_${var.env}_ecs_task_execution_role_svc"
 
@@ -58,7 +57,8 @@ resource "aws_iam_role_policy" "ecs_task_execution_policy" {
                 "logs:PutLogEvents"
             ],
             "Resource": "*"
-        },{
+        },
+        {
             "Sid": "VisualEditor0",
             "Effect": "Allow",
             "Action": [
@@ -67,8 +67,7 @@ resource "aws_iam_role_policy" "ecs_task_execution_policy" {
                 "secretsmanager:DescribeSecret",
                 "secretsmanager:ListSecretVersionIds"
             ],
-            "Resource": 
-            [
+            "Resource": [
               "arn:aws:secretsmanager:${var.aws_region}:${local.account_id}:secret:caris_batch_secret*",
               "arn:aws:secretsmanager:${var.aws_region}:${local.account_id}:secret:TF_VAR_postgres_admin_password*",
               "arn:aws:secretsmanager:${var.aws_region}:${local.account_id}:secret:wh-infra.auto.tfvars*",
@@ -86,4 +85,3 @@ resource "aws_iam_role_policy" "ecs_task_execution_policy" {
 }
 EOF
 }
-

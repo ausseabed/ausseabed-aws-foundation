@@ -38,4 +38,5 @@ module "networking" {
 module "ancillary" {
   source = "./ancillary"
   env    = local.env
+  aws_region = var.aws_region
 }

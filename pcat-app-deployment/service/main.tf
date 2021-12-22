@@ -2,10 +2,9 @@ data "aws_ecs_cluster" "ga_sb_default_geoserver_cluster" {
   cluster_name = "ga_sb_${var.env}_geoserver_cluster"
 }
 
-data "aws_iam_role" "ecs_task_execution_role_svc" {
-  name = "ga_sb_${var.env}_ecs_task_execution_role_svc"
+data "aws_iam_role" "ecs_task_execution_role_pcat" {
+  name = "ga_sb_${var.env}_ecs_task_execution_role_pcat"
 }
-
 
 data "aws_secretsmanager_secret" "postgres_password" {
   name = "TF_VAR_postgres_admin_password"
@@ -14,8 +13,6 @@ data "aws_secretsmanager_secret" "postgres_password" {
 data "aws_secretsmanager_secret_version" "postgres_password" {
   secret_id = data.aws_secretsmanager_secret.postgres_password.id
 }
-
-
 
 resource "aws_ecs_service" "ga_sb_pc_service" {
   name                              = "ga_sb_${var.env}_pc_service"
@@ -47,17 +44,19 @@ resource "aws_ecs_service" "ga_sb_pc_service" {
     assign_public_ip = false
   }
 }
+
 locals {
   apc_version = (regex(".*:([^:]*)", var.client_image)[0] == "latest" ? formatdate("YYYY-MM-DD'T'hh:mm:ssZZZZ", timestamp()) : regex(".*:([^:]*)", var.client_image)[0])
 }
+
 # TODO need to specify this for product catalogue
 resource "aws_ecs_task_definition" "ga_sb_pc_serverclient" {
   family             = "ga_sb_${var.env}_pc_serverclient"
   cpu                = var.server_cpu
   memory             = var.server_memory
   network_mode       = "awsvpc"
-  execution_role_arn = data.aws_iam_role.ecs_task_execution_role_svc.arn
-  task_role_arn      = data.aws_iam_role.ecs_task_execution_role_svc.arn
+  execution_role_arn = data.aws_iam_role.ecs_task_execution_role_pcat.arn
+  task_role_arn      = data.aws_iam_role.ecs_task_execution_role_pcat.arn
   requires_compatibilities = [
   "FARGATE"]
   container_definitions = <<DEFINITION
