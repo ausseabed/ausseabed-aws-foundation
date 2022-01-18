@@ -1,12 +1,3 @@
-resource "aws_eip" "geoserver_eip" {
-  count = length(var.networking.web_tier_subnets)
-  vpc   = true
-
-  lifecycle {
-    ignore_changes = [tags]
-  }
-}
-
 resource "aws_lb" "geoserver_load_balancer" {
   name               = "ga-sb-${var.env}-geoserver-lb"
   internal           = false
@@ -20,11 +11,9 @@ resource "aws_lb" "geoserver_load_balancer" {
   dynamic "subnet_mapping" {
     for_each = [for i in range(length(var.networking.web_tier_subnets)) : {
       subnet_id = var.networking.web_tier_subnets[i]
-      //      allocation_id = aws_eip.geoserver_eip[i].id
     }]
     content {
       subnet_id = subnet_mapping.value.subnet_id
-      //      allocation_id = subnet_mapping.value.allocation_id
     }
   }
 
