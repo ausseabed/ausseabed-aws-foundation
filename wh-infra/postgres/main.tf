@@ -56,7 +56,7 @@ resource "aws_db_instance" "asbwarehouse" {
   iam_database_authentication_enabled = false
   storage_type                        = "gp2"
   engine                              = "postgres"
-  engine_version                      = "11.10"
+  engine_version                      = "11.12"
   instance_class                      = var.postgres_server_spec
   name                                = "ga_sb_${var.env}_wh_asbwarehouse_db"
   identifier                          = "ga-sb-${var.env}-wh-asbwarehouse-db"
