@@ -1,4 +1,3 @@
-
 data "aws_caller_identity" "current" {}
 
 locals {
@@ -12,7 +11,6 @@ data "aws_ecs_cluster" "ga_sb_default_geoserver_cluster" {
 data "aws_iam_role" "ecs_task_execution_role_svc" {
   name = "ga_sb_${var.env}_ecs_task_execution_role_svc"
 }
-
 
 resource "aws_ecs_task_definition" "geoserver" {
   family                   = "ga_sb_${var.env}_wh_geoserver"
@@ -60,7 +58,15 @@ resource "aws_ecs_task_definition" "geoserver" {
       },
       {
         "name": "SNAPSHOT_ISO_DATETIME",
-        "value" : "${var.geoserver_environment_vars.snapshot_iso_datetime}" 
+        "value": "${var.geoserver_environment_vars.snapshot_iso_datetime}"
+      },
+      {
+        "name": "FILE_BUCKET",
+        "value": "${var.geoserver_environment_vars.files_bucket}"
+      },
+      {
+        "name": "FILES_PREFIX",
+        "value": "survey/"
       }
     ],
     "secrets": [
@@ -84,7 +90,6 @@ resource "aws_ecs_task_definition" "geoserver" {
 ]
 DEFINITION
 }
-
 
 resource "aws_ecs_service" "geoserver_service" {
   name            = "ga_sb_${var.env}_geoserver_service"

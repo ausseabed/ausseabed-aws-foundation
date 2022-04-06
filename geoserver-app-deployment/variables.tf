@@ -1,4 +1,3 @@
-
 variable "aws_region" {}
 
 variable "env" {
@@ -26,7 +25,8 @@ variable "accessip" {}
 #variable "fargate_memory"{}
 variable "geoserver_image" {
   default = "288871573946.dkr.ecr.ap-southeast-2.amazonaws.com/ausseabed-geoserver:latest"
-} # based on kartoza/geoserver
+}
+# based on kartoza/geoserver
 
 variable "server_cpu" {}
 variable "server_memory" {}
@@ -37,4 +37,7 @@ variable "geoserver_snapshot_iso_datetime" {
   default = null
 }
 
-
+variable "files_bucket" {
+  description = "Bucket containing survey zip files"
+  type        = string
+}

@@ -9,7 +9,8 @@ variable "geoserver_environment_vars" {
     geoserver_initial_memory = string,
     geoserver_maximum_memory = string,
     product_catalogue_url    = string,
-    snapshot_iso_datetime    = string
+    snapshot_iso_datetime    = string,
+    files_bucket             = string
   })
 }
 
@@ -20,7 +21,6 @@ variable "server_memory" {}
 variable "geoserver_image" {}
 
 
-
 variable "networking" {
   type = object({
     vpc_id                                = string,
@@ -29,4 +29,3 @@ variable "networking" {
     ecs_geoserver_security_group_id       = string,
   })
 }
-

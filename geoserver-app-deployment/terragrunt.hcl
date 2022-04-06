@@ -18,20 +18,25 @@ locals {
   "288871573946", "288871573946.dkr.ecr.ap-southeast-2.amazonaws.com/ausseabed-geoserver:latest"
   )
 
+  files_buckets = map(
+    "831535125571", "files.ausseabed.gov.au",
+    "288871573946", "files.nonprod.ausseabed.gov.au"
+  )
+
   s3_backend_role_arn = local.s3_backend_role_arns[get_aws_account_id()]
   s3_backend_key      = local.s3_backend_keys[get_aws_account_id()]
   env                 = local.envs[get_aws_account_id()]
   geoserver_image     = local.geoserver_images[get_aws_account_id()]
+  files_bucket        = local.files_buckets[get_aws_account_id()]
 }
 
 inputs = {
   env             = local.env
   geoserver_image = local.geoserver_image
+  files_bucket    = local.files_bucket
 }
 
 terraform {
-
-
   before_hook "before_hook" {
     commands = [
       "apply",
@@ -41,7 +46,6 @@ terraform {
       "Using S3 backend key `${local.s3_backend_key}` using assumed role: `${local.s3_backend_role_arn}`"]
   }
 }
-
 
 remote_state {
   backend  = "s3"
@@ -57,4 +61,3 @@ remote_state {
     role_arn = "${local.s3_backend_role_arn}"
   }
 }
-
