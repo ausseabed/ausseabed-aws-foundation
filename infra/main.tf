@@ -10,7 +10,7 @@ locals {
 }
 
 terraform {
-  required_version = "= 0.12.19"
+  required_version = "= 0.12.29"
 
   backend "s3" {
   }
