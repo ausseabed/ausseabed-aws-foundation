@@ -3,6 +3,8 @@ provider "aws" {
 }
 
 terraform {
+  required_version = "= 0.12.19"
+
   backend "s3" {
     bucket = "ausseabed-aws-foundation-tf-infra"
     key    = "terraform/terraform-aws-foundation-tests.tfstate"

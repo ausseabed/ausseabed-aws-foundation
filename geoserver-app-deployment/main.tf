@@ -1,3 +1,7 @@
+terraform {
+  required_version = "= 0.12.19"
+}
+
 locals {
   env                   = (var.env != null) ? var.env : terraform.workspace
   #TODO create .prod.aussueabed zone for internal communications

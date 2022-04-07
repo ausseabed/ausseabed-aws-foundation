@@ -1,3 +1,7 @@
+terraform {
+  required_version = "= 0.12.19"
+}
+
 locals {
   env    = (var.env != null) ? var.env : terraform.workspace
   secret = jsondecode(data.aws_secretsmanager_secret_version.wh-infra-secrets.secret_string)

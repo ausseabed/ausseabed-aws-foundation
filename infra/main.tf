@@ -9,12 +9,12 @@ locals {
   account_id = data.aws_caller_identity.current.account_id
 }
 
-
 terraform {
+  required_version = "= 0.12.19"
+
   backend "s3" {
   }
 }
-
 
 module "networking" {
   source                 = "./networking"
