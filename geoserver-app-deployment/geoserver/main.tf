@@ -61,7 +61,7 @@ resource "aws_ecs_task_definition" "geoserver" {
         "value": "${var.geoserver_environment_vars.snapshot_iso_datetime}"
       },
       {
-        "name": "FILE_BUCKET",
+        "name": "FILES_BUCKET",
         "value": "${var.geoserver_environment_vars.files_bucket}"
       },
       {
