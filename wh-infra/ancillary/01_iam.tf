@@ -59,7 +59,6 @@ resource "aws_iam_role_policy" "ecs_task_execution_policy" {
             "Resource": "*"
         },
         {
-            "Sid": "VisualEditor0",
             "Effect": "Allow",
             "Action": [
                 "secretsmanager:GetResourcePolicy",
@@ -76,9 +75,18 @@ resource "aws_iam_role_policy" "ecs_task_execution_policy" {
             ]
         },
         {
-            "Sid": "VisualEditor1",
             "Effect": "Allow",
             "Action": "secretsmanager:GetRandomPassword",
+            "Resource": "*"
+        },
+        {
+            "Effect": "Allow",
+            "Action": [
+                "ssmmessages:CreateControlChannel",
+                "ssmmessages:CreateDataChannel",
+                "ssmmessages:OpenControlChannel",
+                "ssmmessages:OpenDataChannel"
+            ],
             "Resource": "*"
         }
     ]
