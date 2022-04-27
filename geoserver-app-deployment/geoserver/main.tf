@@ -95,7 +95,7 @@ resource "aws_ecs_service" "geoserver_service" {
   name                   = "ga_sb_${var.env}_geoserver_service"
   cluster                = data.aws_ecs_cluster.ga_sb_default_geoserver_cluster.id
   task_definition        = aws_ecs_task_definition.geoserver.arn
-  desired_count          = var.env == "prod" ? 3 : 1
+  desired_count          = var.env == "prod" ? 10 : 1
   launch_type            = "FARGATE"
   enable_execute_command = true
 
