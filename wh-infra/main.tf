@@ -30,16 +30,17 @@ data "aws_secretsmanager_secret_version" "wh-infra-secrets" {
   secret_id = data.aws_secretsmanager_secret.wh-infra-secrets.id
 }
 
+locals {
+  wh_dns_map = map(
+    "default", "dev.ausseabed.gov.au",
+    "prod", "ausseabed.gov.au"
+  )
+  wh_dns_zone = local.wh_dns_map[var.env]
+}
+
 module "networking" {
   source = "./networking"
   env    = local.env
-}
-
-module "ancillary" {
-  source     = "./ancillary"
-  env        = local.env
-  aws_region = var.aws_region
-  networking = module.networking
 }
 
 module "postgres" {
@@ -61,5 +62,5 @@ module "cloudfront" {
   env                   = local.env
   mh370_cache_bucket    = module.s3.mh370_cache_bucket
   mh370_storymap_bucket = module.s3.mh370_storymap_bucket
-  wh_dns_zone           = module.ancillary.wh_dns_zone
+  wh_dns_zone           = local.wh_dns_zone
 }
