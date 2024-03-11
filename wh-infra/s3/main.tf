@@ -1,14 +1,38 @@
 resource "aws_s3_bucket" "mh370_cache" {
   bucket = "ausseabed-mh370-cache-${var.env}"
+
+  server_side_encryption_configuration {
+    rule {
+      apply_server_side_encryption_by_default {
+        sse_algorithm = "AES256"
+      }
+    }
+  }
 }
 
 resource "aws_s3_bucket" "mh370_storymap" {
   bucket = "ausseabed-mh370-storymap-${var.env}"
+
+  server_side_encryption_configuration {
+    rule {
+      apply_server_side_encryption_by_default {
+        sse_algorithm = "AES256"
+      }
+    }
+  }
 }
 
 # Bucket for files required to build environments. Build processes can pull from here.
 resource "aws_s3_bucket" "staging" {
   bucket = "ausseabed-staging-${var.env}"
+
+  server_side_encryption_configuration {
+    rule {
+      apply_server_side_encryption_by_default {
+        sse_algorithm = "AES256"
+      }
+    }
+  }
 
   cors_rule {
     allowed_headers = [
